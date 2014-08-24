@@ -8,17 +8,14 @@ OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all: run
+all:
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
-run:
-	$(CXX) $(COMPILE) $(FILES)   $(LIBS)
-	mv *.o $(OBJDIR)
-	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+run: create
 	./$(EXE)
 
 clean:
