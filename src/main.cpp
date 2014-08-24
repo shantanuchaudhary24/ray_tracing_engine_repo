@@ -6,7 +6,7 @@
 #include <GL/glut.h>
 
 // Clears the current window and draws a triangle.
- void display() 
+ void display()
 {
 
     // Set every pixel in the frame buffer to the current clear color.
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     glutInitWindowPosition(80, 80);
     glutInitWindowSize(400, 300);
     glutCreateWindow("A Simple Triangle");
-    
+
     // Tell GLUT that whenever the main window needs to be repainted that it
     // should call the function display().
     glutDisplayFunc(display);

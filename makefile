@@ -1,18 +1,27 @@
-#Makefile for src folder
-DIR = /home/shantanu/reporitories/csl781_assignment1
+CXX=g++
+EXE=bin/run
+FILES= src/main.cpp
+COMPILE=-c
+LINK=-o
+OBJECTS= obj/main.o
+OBJDIR= obj/
+LIBS= -lGL -lGLU -lglut -lm
+DISABLE_WARNING=-w
 
-SRC = hello_world
+all: run
 
-LIBS = -lglut -lGLU -lGL
-
-CC = g++
-
-default:
-		$(CC) -Wall -o build/$(SRC) src/$(SRC).cpp $(LIBS)
+create:
+	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
+	mv *.o $(OBJDIR)
+	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
 run:
-		build/$(SRC)
+	$(CXX) $(COMPILE) $(FILES)   $(LIBS)
+	mv *.o $(OBJDIR)
+	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+	./$(EXE)
 
 clean:
-		-rm -f $(SRC)
-
+	rm -rf $(EXE)
+	rm -rf $(OBJECTS)
+	rm -rf *.h~ *.cpp~ *Makefile~
