@@ -3,12 +3,12 @@ EXE=bin/run
 FILES= src/main.cpp
 COMPILE=-c
 LINK=-o
-OBJECTS= obj/test.o
+OBJECTS= obj/main.o
 OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all: create
+all: run
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
