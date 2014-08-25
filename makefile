@@ -8,7 +8,7 @@ OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all:
+all: create
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
