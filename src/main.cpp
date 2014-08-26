@@ -1,8 +1,8 @@
-#include <GL/glut.h> // Include the GLUT header file  
-#include <math.h>
-float angle_x = 0;
-float angle_y = 0;
-float angle_z = 0;
+#include "../include/headers.h"
+#include "../include/macros.h"
+#include "../include/polygon.h"
+#include "../include/scene.h"
+using namespace std;
 
 void myTranslatef( float x, float y, float z){
     const float mat[] = {1.0,0,0,0,0,1.0,0,0,0,0,1.0,0,x,y,z,1.0};
@@ -89,44 +89,11 @@ void display (void)
 	myRotatef(angle_x, 1, 0, 0);
 	myRotatef(angle_y, 0, 1, 0);
 	myRotatef(angle_z, 0, 0, 1);
-	glColor3f(0.4,0.4,0.4);
 
-		glPointSize(5);
-		glBegin(GL_POINTS);
-			glVertex3f(6,0,0);
-		glEnd();
+	default_scene();
 
-		myRotatef(30,1,0,0);
-		glutWireCube(2);
-		myRotatef(-30,1,0,0);
+	myTranslatef(-1,0,0);
 
-		glColor3f(0.8,0.8,0.4);
-		myTranslatef(1,0,0);
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(0,3,3);
-			glVertex3f(0,-3,3);
-			glVertex3f(0,-3,-3);
-			glVertex3f(0,3,-3);
-		glEnd();
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(-5,5,5);
-			glVertex3f(-5,-5,5);
-			glVertex3f(-5,-5,-5);
-			glVertex3f(-5,5,-5);
-		glEnd();
-
-		glBegin(GL_LINES);
-			glVertex3f(6,0,0);
-			glVertex3f(-5,5,5);
-			glVertex3f(6,0,0);
-			glVertex3f(-5,-5,5);
-			glVertex3f(6,0,0);
-			glVertex3f(-5,-5,-5);
-			glVertex3f(6,0,0);
-			glVertex3f(-5,5,-5);
-		glEnd();
-
-		myTranslatef(-1,0,0);
 
 	glutSwapBuffers();
 }  

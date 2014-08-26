@@ -7,3 +7,5 @@
 #include <assert.h>
 #include <GL/glut.h>
 #include <GL/glu.h>
+#include <string>
+#include <vector>

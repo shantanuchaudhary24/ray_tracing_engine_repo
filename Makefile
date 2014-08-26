@@ -1,14 +1,14 @@
 CXX=g++
 EXE=bin/run
-FILES= src/main.cpp
+FILES= src/polygon.cpp src/scene.cpp src/main.cpp
 COMPILE=-c
 LINK=-o
-OBJECTS= obj/main.o
+OBJECTS= obj/polygon.o obj/scene.o obj/main.o
 OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all: run
+all: create
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)

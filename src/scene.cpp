@@ -6,7 +6,7 @@
  */
 #include "../include/headers.h"
 #include "../include/macros.h"
-
+#include "../include/polygon.h"
 
 /* This function is used to create the various 3D shapes in the scene.
  * The position of the various objects within the scene are fixed.
@@ -14,11 +14,17 @@
 void default_scene(void)
 {
 
-	glClearColor(0, 0, 0, 1); // Clear the background of our window
-	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer
-	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
+	vertex plane_vertices[] = {
+			vertex(1,-0.6, -0.75, 0.5),
+			vertex(2,0.6, -0.75, 0),
+			vertex(3, 0, 0.75, 0)
+	};
 
-	myTranslatef(0, 0, -10); // Push eveything 5 units back into the scene, otherwise we won't see the primitive
+	RGB_value color = color_comp(1,0,0);
+
+	polygon plane = polygon();
+	plane.add_face(3,plane_vertices,&color);
+	plane.draw_polygon();
 
 	return ;
 }
