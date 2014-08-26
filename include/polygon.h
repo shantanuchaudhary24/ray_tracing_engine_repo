@@ -22,6 +22,7 @@ public:
 	void draw(void);
 	void translate(float a,float b, float c);
 	void scale(float a,float b, float c);
+	void rotate(float x, float y, float z, float theta);
 };
 
 #endif /* POLYGON_H_ */

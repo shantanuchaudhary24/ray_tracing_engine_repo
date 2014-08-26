@@ -72,7 +72,7 @@ void default_scene(void)
 	polygon square = polygon();
 	plane.add_face(3,plane_vertices,&color);
 	plane.draw();
-	plane.scale(2,1,0);
+	plane.scale(3,1,0);
 	plane.draw();
 
 //	square.add_face(4,square_vertices,&color);

@@ -48,6 +48,7 @@
 #ifdef DEBUG
 		for (i=0;i<face_set.size();i++)
 		{
+			std::cout << "Face :" << i+1 << "\n"  ;
 			for(j=0;j<face_set[i]->number_of_vertices;j++)
 			{
 				std::cout << "Vertex " << j << " coordinates:\n";
@@ -65,35 +66,37 @@
 	void polygon::translate(float a,float b, float c)
 	{
 		int i,j;
-		vertex output_pt = vertex_pt();
 		for (i=0;i<face_set.size();i++)
 		{
 			for(j=0;j<face_set[i]->number_of_vertices;j++)
-			{
-				output_pt = generic_transform(face_set[i]->vertex_set[j], a, b, c, 1, 0);
-				face_set[i]->vertex_set[j].x_pos = output_pt.x_pos;
-				face_set[i]->vertex_set[j].y_pos = output_pt.y_pos;
-				face_set[i]->vertex_set[j].z_pos = output_pt.z_pos;
-			}
+				face_set[i]->vertex_set[j] = translate_transform(face_set[i]->vertex_set[j], a, b, c);
 		}
 	}
 
 	void polygon::scale(float a,float b, float c)
 	{
 		int i,j;
-		vertex output_pt = vertex_pt();
 		for (i=0;i<face_set.size();i++)
 		{
 			for(j=0;j<face_set[i]->number_of_vertices;j++)
-			{
-				output_pt = generic_transform(face_set[i]->vertex_set[j], a, b, c, 2, 0);
-				face_set[i]->vertex_set[j].x_pos = output_pt.x_pos;
-				face_set[i]->vertex_set[j].y_pos = output_pt.y_pos;
-				face_set[i]->vertex_set[j].z_pos = output_pt.z_pos;
-			}
+				face_set[i]->vertex_set[j] = scale_transform(face_set[i]->vertex_set[j], a, b, c);
 		}
 	}
 
-//	void polygon::translate()
+//	void polygon::rotate(float a, float b, float c, float theta)
+//	{
+//		int i,j;
+//		vertex output_pt = vertex_pt();
+//		for (i=0;i<face_set.size();i++)
+//		{
+//			for(j=0;j<face_set[i]->number_of_vertices;j++)
+//			{
+//				output_pt = generic_transform(face_set[i]->vertex_set[j], a, b, c, 3, theta);
+//				face_set[i]->vertex_set[j].x_pos = output_pt.x_pos;
+//				face_set[i]->vertex_set[j].y_pos = output_pt.y_pos;
+//				face_set[i]->vertex_set[j].z_pos = output_pt.z_pos;
+//			}
+//		}
+//	}
 
 

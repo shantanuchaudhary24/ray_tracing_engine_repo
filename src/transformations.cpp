@@ -10,52 +10,28 @@
 #include "../include/transformations.h"
 #include "../include/structs.h"
 
-vertex generic_transform(vertex point, float a, float b, float c, int option, float theta)
+/* Generic Function for performing transformations such as follows:
+ * For Translation Option 	= 1
+ * For Scaling Option		= 2
+ * For Rotation Option		= 3
+ *
+ *
+ * */
+vertex translate_transform(vertex point, float a, float b, float c)
 {
-	vertex output_pt = vertex_pt(0,0,0);
-	float final_pt[]={0,0,0,1};
-	const float init_point[] = {point.x_pos,point.y_pos, point.z_pos,1};
-	const float translation_matrix[4][4] = {
-			(1,0,0,0),
-			(0,1,0,0),
-			(0,0,1,0),
-			(a,b,c,1)
-	};
-
-	const float scaling_matrix[4][4] = {
-			(a,0,0,0),
-			(0,b,0,0),
-			(0,0,c,0),
-			(0,0,0,1)
-	};
-
-	switch (option){
-		case 1:
-			output_pt.x_pos = init_point[0]+a;
-			output_pt.y_pos= init_point[1]+b;
-			output_pt.z_pos = init_point[2]+c;
-			break;
-		case 2:
-			output_pt.x_pos = init_point[0]*a;
-			output_pt.y_pos = init_point[1]*b;
-			output_pt.z_pos = init_point[2]*c;
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		case 8:
-			break;
-
-	}
-	return output_pt;
+	return vertex_pt(point.x_pos+a, point.y_pos+b, point.y_pos+c);
 }
+
+vertex scale_transform(vertex point, float a, float b, float c)
+{
+	return vertex_pt(point.x_pos*a, point.y_pos*b, point.y_pos*c);
+}
+
+vertex rotate_transform(vertex point, float a, float b, float c, float theta)
+{
+	return vertex(point);
+}
+
 //	const float rotation_matrix[][] = {
 //
 //
