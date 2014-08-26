@@ -15,16 +15,17 @@ void default_scene(void)
 {
 
 	vertex plane_vertices[] = {
-			vertex(1,-0.6, -0.75, 0.5),
-			vertex(2,0.6, -0.75, 0),
-			vertex(3, 0, 0.75, 0)
+			vertex(-0.6, -0.75, 0.5),
+			vertex(0.6, -0.75, 0),
+			vertex(0.0, 0.75, 0.0)
 	};
 
 	RGB_value color = color_comp(1,0,0);
 
 	polygon plane = polygon();
 	plane.add_face(3,plane_vertices,&color);
-	plane.draw_polygon();
+	plane.draw();
+	plane.translate(10,3,4);
 
 	return ;
 }

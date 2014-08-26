@@ -19,7 +19,8 @@ private:
 public:
 	polygon(void);
 	void add_face(int num_vertices, vertex* vertex_array, RGB_value* color);
-	void draw_polygon(void);
+	void draw(void);
+	void translate(float a,float b, float c);
 };
 
 #endif /* POLYGON_H_ */

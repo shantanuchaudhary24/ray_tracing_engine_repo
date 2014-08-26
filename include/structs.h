@@ -28,31 +28,21 @@ typedef struct color_comp{
 }RGB_value;
 
 typedef struct vertex_pt{
-	int vertex_number;
-	double x_pos;
-	double y_pos;
-	double z_pos;
+	float x_pos;
+	float y_pos;
+	float z_pos;
 
 	vertex_pt(){
-		vertex_number = 0;
 		x_pos = 0;
 		y_pos = 0;
 		z_pos = 0;
 	}
 
-	vertex_pt(int number, double vx, double vy, double vz){
-		vertex_number = number;
+	vertex_pt( float vx, float vy, float vz){
 		x_pos = vx;
 		y_pos = vy;
 		z_pos = vz;
 
-	}
-
-	vertex_pt(int number, double vx, double vy, double vz, RGB_value color){
-			vertex_number = number;
-			x_pos = vx;
-			y_pos = vy;
-			z_pos = vz;
 	}
 
 }vertex;
