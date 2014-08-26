@@ -14,11 +14,6 @@ vertex generic_transform(vertex point, float a, float b, float c, int option, fl
 {
 	vertex output_pt = vertex_pt(0,0,0);
 	float final_pt[]={0,0,0,1};
-	output_pt.x_pos = final_pt[0];
-	output_pt.y_pos = final_pt[1];
-	output_pt.z_pos = final_pt[2];
-	return output_pt;
-
 	const float init_point[] = {point.x_pos,point.y_pos, point.z_pos,1};
 	const float translation_matrix[4][4] = {
 			(1,0,0,0),
@@ -37,7 +32,7 @@ vertex generic_transform(vertex point, float a, float b, float c, int option, fl
 	switch (option){
 		case 1:
 			output_pt.x_pos = init_point[0]+a;
-			output_pt.y_pos = init_point[1]+b;
+			output_pt.y_pos= init_point[1]+b;
 			output_pt.z_pos = init_point[2]+c;
 			break;
 		case 2:
@@ -77,11 +72,11 @@ vertex generic_transform(vertex point, float a, float b, float c, int option, fl
 //	}
 
 
-//void myTranslatef( float x, float y, float z, vertex point){
-//	    const float mat[] = {1.0,0,0,0,0,1.0,0,0,0,0,1.0,0,x,y,z,1.0};
-//	    glMultMatrixf(&mat[0]);
-//	    return ;
-//	};
+void myTranslatef( float x, float y, float z){
+	    const float mat[] = {1.0,0,0,0,0,1.0,0,0,0,0,1.0,0,x,y,z,1.0};
+	    glMultMatrixf(&mat[0]);
+	    return ;
+	};
 
 void myScalef(float sx, float sy, float sz){
     const float mat[] = {sx,0,0,0,0,sy,0,0,0,0,sz,0,0,0,0,1.0};

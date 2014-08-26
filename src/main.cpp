@@ -5,11 +5,6 @@
 #include "../include/transformations.h"
 using namespace std;
 
-void myTranslatef( float x, float y, float z){
-	    const float mat[] = {1.0,0,0,0,0,1.0,0,0,0,0,1.0,0,x,y,z,1.0};
-	    glMultMatrixf(&mat[0]);
-	    return ;
-	};
 
 
 void handleKeypressSpecial(int key, int x, int y ) {
@@ -53,8 +48,8 @@ void handleKeypressSpecial(int key, int x, int y ) {
 void display (void) 
 {    
 	glClearColor(0, 0, 0, 1); // Clear the background of our window
-	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer 
-	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
+	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer
+	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
 
 	myTranslatef(0, 0, -3); // Push eveything 5 units back into the scene, otherwise we won't see the primitive
 //	myScalef(1.4,1.4,1.4);

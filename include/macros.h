@@ -4,6 +4,7 @@
  *  Created on: Aug 26, 2014
  *      Author: shantanu
  */
+//#define DEBUG 1
 
 static int screen_width = 1280 ;
 static int screen_height = 720 ;

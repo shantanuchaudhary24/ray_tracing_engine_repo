@@ -8,16 +8,18 @@ OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all: create
+all: bin
 
-create:
-	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
-	mv *.o $(OBJDIR)
-	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
-
-run: create
+run:
 	./$(EXE)
 
+bin:object
+	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+
+object:
+	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
+	mv *.o $(OBJDIR)
+	
 clean:
 	rm -rf $(EXE)
 	rm -rf $(OBJECTS)
