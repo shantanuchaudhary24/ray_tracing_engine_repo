@@ -13,7 +13,7 @@ extern float angle_x ;
 extern float angle_y ;
 extern float angle_z ;
 
-void draw_plane(float x, float y, float z, float l, float b, float x_distance, float y_distance, float z_distance)
+void draw_plane(float x, float y, float z, float l, float b, float x_distance, float y_distance, float z_distance, float x_rot, float y_rot, float z_rot)
 {
 	RGB_value color = color_comp(0.5,0.5,0.23);
 
@@ -120,8 +120,15 @@ void draw_cuboid(float x, float y, float z, float l, float b, float h, float x_d
 void default_scene(void)
 {
 
-//	draw_plane(0,0,0,3,3,0,0,-7);
-	draw_cuboid(0,0,0,3,3,3,0,0,-10);
+	float x_plane, y_plane, z_plane;
+	float x_cube, y_cube, z_cube;
+	float x_composite, y_composite, z_composite;
+	x_composite = 0;
+	y_composite = 0;
+	z_composite = 0;
+
+//	draw_plane(x_composite,y_composite,z_composite,3,3,0,0,-10);
+	draw_cuboid(x_composite,y_composite,z_composite,1.5,1.5,1.5,0,0,-10);
 
 	return ;
 }
