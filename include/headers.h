@@ -1,3 +1,5 @@
+/* Standard headers for the source code*/
+
 #define _HAND_H_
 #include <iostream>
 #include <stdlib.h>
