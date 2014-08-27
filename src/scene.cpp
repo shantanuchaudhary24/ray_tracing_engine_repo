@@ -9,83 +9,119 @@
 #include "../include/polygon.h"
 #include "../include/transformations.h"
 
+extern float angle_x ;
+extern float angle_y ;
+extern float angle_z ;
+
+void draw_plane(float x, float y, float z, float l, float b, float x_distance, float y_distance, float z_distance)
+{
+	RGB_value color = color_comp(0.5,0.5,0.23);
+
+	vertex plane_vertices[] = {
+		vertex(x+l/2,y+b/2,0),
+		vertex(x+l/2,y-b/2,0),
+		vertex(x-l/2,y-b/2,0),
+		vertex(x-l/2,y+b/2,0)
+	};
+
+	polygon plane = polygon( x, y, z,x_distance, y_distance, z_distance,4,plane_vertices,&color);
+	plane.rotate(1,0,0,angle_x);
+	plane.rotate(0,1,0,angle_y);
+	plane.rotate(0,0,1,angle_z);
+	plane.draw();
+	return;
+}
+
+void draw_cuboid(float x, float y, float z, float l, float b, float h, float x_distance, float y_distance, float z_distance)
+{
+	RGB_value color = color_comp(0.5,0.5,1);
+
+	vertex face1_vertices[] = {
+		vertex(x+l/2,y+h/2,z+b/2),
+		vertex(x+l/2,y-h/2,z+b/2),
+		vertex(x-l/2,y-h/2,z+b/2),
+		vertex(x-l/2,y+h/2,z+b/2)
+	};
+
+	vertex face2_vertices[] = {
+		vertex(x+l/2,y+h/2,z-b/2),
+		vertex(x+l/2,y-h/2,z-b/2),
+		vertex(x-l/2,y-h/2,z-b/2),
+		vertex(x-l/2,y+h/2,z-b/2)
+	};
+
+	vertex face3_vertices[] = {
+		vertex(x+l/2,y+h/2,z+b/2),
+		vertex(x+l/2,y+h/2,z-b/2),
+		vertex(x+l/2,y-h/2,z-b/2),
+		vertex(x+l/2,y-h/2,z+b/2)
+	};
+
+	vertex face4_vertices[] = {
+		vertex(x-l/2,y+h/2,z+b/2),
+		vertex(x-l/2,y-h/2,z+b/2),
+		vertex(x-l/2,y-h/2,z-b/2),
+		vertex(x-l/2,y+h/2,z-b/2)
+	};
+
+	vertex face5_vertices[] = {
+		vertex(x+l/2,y+h/2,z+b/2),
+		vertex(x+l/2,y+h/2,z-b/2),
+		vertex(x-l/2,y+h/2,z-b/2),
+		vertex(x-l/2,y+h/2,z+b/2)
+	};
+
+	vertex face6_vertices[] = {
+		vertex(x+l/2,y-h/2,z+b/2),
+		vertex(x+l/2,y-h/2,z-b/2),
+		vertex(x-l/2,y-h/2,z-b/2),
+		vertex(x-l/2,y-h/2,z+b/2)
+	};
+
+	polygon face1 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face1_vertices, &color);
+	polygon face2 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face2_vertices, &color);
+	polygon face3 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face3_vertices, &color);
+	polygon face4 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face4_vertices, &color);
+	polygon face5 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face5_vertices, &color);
+	polygon face6 = polygon(x,y,z,x_distance,y_distance, z_distance,4, face6_vertices, &color);
+
+	face1.rotate(1,0,0,angle_x);
+	face1.rotate(0,1,0,angle_y);
+	face1.rotate(0,0,1,angle_z);
+	face2.rotate(1,0,0,angle_x);
+	face2.rotate(0,1,0,angle_y);
+	face2.rotate(0,0,1,angle_z);
+	face3.rotate(1,0,0,angle_x);
+	face3.rotate(0,1,0,angle_y);
+	face3.rotate(0,0,1,angle_z);
+	face4.rotate(1,0,0,angle_x);
+	face4.rotate(0,1,0,angle_y);
+	face4.rotate(0,0,1,angle_z);
+	face5.rotate(1,0,0,angle_x);
+	face5.rotate(0,1,0,angle_y);
+	face5.rotate(0,0,1,angle_z);
+	face6.rotate(1,0,0,angle_x);
+	face6.rotate(0,1,0,angle_y);
+	face6.rotate(0,0,1,angle_z);
+
+	face1.draw();
+	face2.draw();
+	face3.draw();
+	face4.draw();
+	face5.draw();
+	face6.draw();
+
+
+}
+
 /* This function is used to create the various 3D shapes in the scene.
  * The position of the various objects within the scene are fixed.
  * */
 void default_scene(void)
 {
 
-	vertex plane_vertices[] = {
-		vertex(-0.6, -0.75, 0),
-		vertex(0.6, -0.75, 0),
-		vertex(0.0, 0.75, 0)
-	};
-
-	vertex square_vertices[] = {
-		vertex(-1.05, -0.5, 0.5),
-		vertex(-1.05, 0.5, 0.5),
-		vertex(1.05, 0.5, 0.5),
-		vertex(1.05, -0.5, 0.5),
-	};
-
-	vertex cube1[] = {
-		vertex(-1.05, -0.5, 0.5),
-		vertex(-1.05, 0.5, 0.5),
-		vertex(1.05, 0.5, 0.5),
-		vertex(1.05, -0.5, 0.5),
-	};
-	vertex cube2[] = {
-			vertex(-1.05, -0.5, 0.5),
-			vertex(-1.05, 0.5, 0.5),
-			vertex(1.05, 0.5, 0.5),
-			vertex(1.05, -0.5, 0.5),
-		};
-	vertex cube3[] = {
-			vertex(-1.05, -0.5, 0.5),
-			vertex(-1.05, 0.5, 0.5),
-			vertex(1.05, 0.5, 0.5),
-			vertex(1.05, -0.5, 0.5),
-		};
-	vertex cube4[] = {
-			vertex(-1.05, -0.5, 0.5),
-			vertex(-1.05, 0.5, 0.5),
-			vertex(1.05, 0.5, 0.5),
-			vertex(1.05, -0.5, 0.5),
-		};
-
-	vertex cube5[] = {
-			vertex(-1.05, -0.5, 0.5),
-			vertex(-1.05, 0.5, 0.5),
-			vertex(1.05, 0.5, 0.5),
-			vertex(1.05, -0.5, 0.5),
-		};
-	vertex cube6[] = {
-			vertex(-1.05, -0.5, 0.5),
-			vertex(-1.05, 0.5, 0.5),
-			vertex(1.05, 0.5, 0.5),
-			vertex(1.05, -0.5, 0.5),
-		};
-
-	RGB_value color = color_comp(0.5,0.5,0.23);
-
-	polygon plane = polygon();
-	polygon square = polygon();
-	plane.add_face(3,plane_vertices,&color);
-	plane.draw();
-	plane.scale(3,1,0);
-	plane.draw();
-
-//	square.add_face(4,square_vertices,&color);
-//	square.draw();
-//	myRotatef(angle_x, 1, 0, 0);
-//	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer
-//	square.translate(-,-,-);
-//	square.scale(2,2,2);
-//	square.draw();
+//	draw_plane(0,0,0,3,3,0,0,-7);
+	draw_cuboid(0,0,0,3,3,3,0,0,-10);
 
 	return ;
 }
-
-
-
-

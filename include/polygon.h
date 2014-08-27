@@ -15,9 +15,19 @@ class polygon {
 private:
 	int num_of_faces;
 	std::vector<face_info *> face_set;
+	bool isDrawn;
+	float x_trans;
+	float y_trans;
+	float z_trans;
+	float theta_x;
+	float theta_y;
+	float theta_z;
+	void translate_center(float a,float b, float c);
 
 public:
 	polygon(void);
+	polygon(float x, float y, float z, float l, float b, float h, int num_vertices, vertex* vertex_array, RGB_value* color);
+	int get_num_faces(void);
 	void add_face(int num_vertices, vertex* vertex_array, RGB_value* color);
 	void draw(void);
 	void translate(float a,float b, float c);

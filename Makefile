@@ -8,9 +8,9 @@ OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 
-all: bin
+all: run
 
-run:
+run: bin
 	./$(EXE)
 
 bin:object

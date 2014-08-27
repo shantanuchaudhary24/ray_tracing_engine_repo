@@ -5,38 +5,41 @@
 #include "../include/transformations.h"
 using namespace std;
 
+float angle_x = 0.0f;
+float angle_y = 0.0f;
+float angle_z = 0.0f;
 
 
 void handleKeypressSpecial(int key, int x, int y ) {
 //x and y are the current mouse coordinates
 	switch (key) {
 		case GLUT_KEY_UP:{
-			angle_x += 2;
+			angle_x += 2.5;
 			glutPostRedisplay();
 			break;
 		}
 		case GLUT_KEY_DOWN:{
-			angle_x -= 2;
+			angle_x -= 2.5;
 			glutPostRedisplay();
 			break;
 		}
 		case GLUT_KEY_LEFT:{
-			angle_y += 2;
+			angle_y += 2.5;
 			glutPostRedisplay();
 			break;
 		}
 		case GLUT_KEY_RIGHT:{
-			angle_y -= 2;
+			angle_y -= 2.5;
 			glutPostRedisplay();
 			break;
 		}
 		case GLUT_KEY_PAGE_UP:{
-			angle_z += 2;
+			angle_z += 2.5;
 			glutPostRedisplay();
 			break;
 		}
 		case GLUT_KEY_PAGE_DOWN:{
-			angle_z -= 2;
+			angle_z -= 2.5;
 			glutPostRedisplay();
 			break;
 		}
@@ -51,11 +54,7 @@ void display (void)
 	glClear(GL_COLOR_BUFFER_BIT); //Clear the colour buffer
 	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
 
-	myTranslatef(0, 0, -3); // Push eveything 5 units back into the scene, otherwise we won't see the primitive
-//	myScalef(1.4,1.4,1.4);
-//	myRotatef(angle_x, 1, 0, 0);
-//	myRotatef(angle_y, 0, 1, 0);
-//	myRotatef(angle_z, 0, 0, 1);
+//	myTranslatef(0, 0, -10); // Push everything 5 units back into the scene, otherwise we won't see the primitive
 
 	default_scene();
 
