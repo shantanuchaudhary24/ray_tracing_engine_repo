@@ -60,9 +60,9 @@ float* create_frustrum(float* eye, float* eyenormal, float d1, float d2,
 	frustrum[3 * 7 + 0] += width2;		//fourth point
 	frustrum[3 * 7 + 1] -= height2;
 
-	for (i = 0; i < 8; i++)
-		printf("%f %f %f\n", frustrum[3 * i], frustrum[3 * i + 1],
-				frustrum[3 * i + 2]);
+//	for (i = 0; i < 8; i++)
+//		printf("%f %f %f\n", frustrum[3 * i], frustrum[3 * i + 1],
+//				frustrum[3 * i + 2]);
 	return frustrum;
 }
 

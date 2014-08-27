@@ -88,7 +88,7 @@ void polygonClipping(face_info* polygon){
 	for(i=0;i<clipping_plane_eq.size();i++)
 	{
 		float* eq_plane=clipping_plane_eq.at(i);
-		printf("equation of plane %f %f %f %f \n",eq_plane[0],eq_plane[1],eq_plane[2],eq_plane[3]);
+//		printf("equation of plane %f %f %f %f \n",eq_plane[0],eq_plane[1],eq_plane[2],eq_plane[3]);
 
 		int j;
 		for(j=0;j<CvTable.size();j++)
@@ -103,12 +103,12 @@ void polygonClipping(face_info* polygon){
 			{
 				if(isInsidePlane(eq_plane,point2))		//if v2 is inside
 				{
-					printf("1\n");
+//					printf("1\n");
 					CvTabletemp.push_back(point2);
 				}
 				else															//if v2 is outside
 				{
-					printf("2\n");
+//					printf("2\n");
 					//find intersection point and put in cvtable
 					CvTabletemp.push_back(findIntersection(eq_plane,point1,point2));
 				}
@@ -117,14 +117,14 @@ void polygonClipping(face_info* polygon){
 			{
 				if(isInsidePlane(eq_plane,point2))			//if v2 is inside
 				{
-					printf("3\n");
+//					printf("3\n");
 					//find intersection point and put in cvtable
 					CvTabletemp.push_back(findIntersection(eq_plane,point1,point2));
 					CvTabletemp.push_back(point2);
 				}
 				else
 				{
-					printf("4\n");
+//					printf("4\n");
 				}
 			}
 		}
@@ -137,7 +137,7 @@ void polygonClipping(face_info* polygon){
 			temp = CvTabletemp.at(k);
 			CvTable.push_back(temp);
 		}
-		printf("\n\n\n");
+//		printf("\n\n\n");
 		CvTabletemp.clear();
 	}
 

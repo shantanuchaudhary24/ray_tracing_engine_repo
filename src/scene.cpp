@@ -123,6 +123,5 @@ polygon generate_cuboid(float x, float y, float z, float l, float b, float h, fl
 
 	/* For Debugging. Prints information about the cuboid.*/
 //	cuboid.debug();
-
 	return cuboid;
 }

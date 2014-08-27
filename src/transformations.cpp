@@ -108,6 +108,3 @@ void myRotatef(float theta,float px, float py, float pz){
     return ;
 };
 
-
-
-

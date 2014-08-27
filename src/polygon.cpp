@@ -35,6 +35,9 @@
 		x_trans = x;
 		y_trans = y;
 		z_trans = z;
+		theta_x = 0;
+		theta_y = 0;
+		theta_z = 0;
 		num_of_faces++;
 		face_info* vector_obj = (face_info*)malloc(sizeof(face_info));
 		vector_obj->face_color=(RGB_value *)malloc(sizeof(RGB_value));
