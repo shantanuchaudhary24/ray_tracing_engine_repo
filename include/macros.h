@@ -14,4 +14,3 @@ static int screen_height = 768 ;
 /* Initial spawning position of GLUT window*/
 static int window_position_x = screen_width/4;
 static int window_position_y = screen_height/6;
-

@@ -9,7 +9,6 @@
 #include "../include/macros.h"
 #include "../include/structs.h"
 #include "../include/polygon.h"
-#include "../include/transformations.h"
 
 	/* Main constructor for class
 	* */
