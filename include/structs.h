@@ -8,6 +8,20 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
+
+/* Struct for parsing information from config file*/
+typedef struct config_struct {
+	float *eye_pos;
+	float *eye_up;
+	float *eye_side;
+	float *eye_normal;
+	float backplane_distance;
+	float frontplane_distance;
+	float viewplane_distance;
+	float frontplane_width;
+	float frontplane_height;
+}config;
+
 /* Defines a tuple of RBG value
  * */
 typedef struct color_comp{

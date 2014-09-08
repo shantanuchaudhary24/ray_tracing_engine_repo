@@ -8,7 +8,7 @@
 #ifndef SCENE_H_
 #define SCENE_H_
 
-void init(void);
+void init(config *ptr);
 
 
 

@@ -6,7 +6,8 @@
 #include "../include/transformations.h"
 #include "../include/clipping.h"
 #include "../include/scene.h"
-
+#include "../include/parser.h"
+#include <fstream>
 using namespace std;
 
 /* Global Variable Declarations
@@ -105,15 +106,41 @@ void display(void){
 }
 
 int main(int argc,char *argv[]){
-    glutInit(&argc,argv);
+
+	/* Input file descriptor*/
+	std::ifstream inp;
+
+	/* Initialization of configuration structure and memory allocation*/
+	config *outp;
+	outp = (config *)malloc(sizeof(config));
+	outp->eye_pos = (float *)malloc(3*sizeof(float));
+	outp->eye_up = (float *)malloc(3*sizeof(float));
+	outp->eye_side = (float *)malloc(3*sizeof(float));
+	outp->eye_normal = (float *)malloc(3*sizeof(float));
+	outp->backplane_distance = 0;
+	outp->viewplane_distance = 0;
+	outp->frontplane_width = 0;
+	outp->frontplane_height = 0;
+	outp->backplane_distance = 0;
+
+	/* Read input parameters from configuration file*/
+	read_config(inp,outp);
+
+	/* Preliminary OpenGL calls*/
+	glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(screen_width,screen_height);
     glutInitWindowPosition(screen_width/4,screen_height/4);
     glutCreateWindow("Polygon Clipping!");
     glutSpecialFunc(handleKeypressSpecial);
-    init();
+
+    /* Initialization of functions*/
+    init(outp);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);    
 	glutMainLoop();
+
+	/* Free memory alloted to the configuration structure and its associated fields*/
+	free(outp);
     return 0;
 }

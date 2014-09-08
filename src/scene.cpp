@@ -86,17 +86,17 @@ void create_scene(){
 		sceneData.push_back(poly2);
 }
 
-void init(void){
+void init(config *ptr){
 
-	float eye[]={0.0f,0.0f,-10.0f};
-	float eyeup[]={0.0f,1.0f,0.0f};
-	float eyeside[]={1.0f,0.0f,0.0f};
-	float eyenormal[]={0.0f,0.0f,-1.0f};
-	float d1=1;		//distance of front plane from eye
-	float d2=3;		//distance of back plane from eye
-	float d3=2;		//distance of view plane from eye
-	float width=1;	//width and height of front plane
-	float height=1;
+	float eye[]={ptr->eye_pos[0],ptr->eye_pos[1],ptr->eye_pos[2]};
+	float eyeup[]={ptr->eye_up[0],ptr->eye_up[1],ptr->eye_up[2]};
+	float eyeside[]={ptr->eye_side[0],ptr->eye_side[1],ptr->eye_side[2]};
+	float eyenormal[]={ptr->eye_normal[0],ptr->eye_normal[1],ptr->eye_normal[2]};
+	float d1=ptr->frontplane_distance;		//distance of front plane from eye
+	float d2=ptr->backplane_distance;		//distance of back plane from eye
+	float d3=ptr->viewplane_distance;		//distance of view plane from eye
+	float width=ptr->frontplane_width;	//width and height of front plane
+	float height=ptr->frontplane_height;
 	float midpointViewPlane[]={eye[0]+d3*eyenormal[0],eye[1]+d3*eyenormal[1],eye[2]+d3*eyenormal[2]};		//midpoint of view plane
 	float rdash[]={0,0,0};
 
