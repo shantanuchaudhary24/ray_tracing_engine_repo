@@ -1,20 +1,19 @@
-###########################################################################################
+#############################################################################################################################################################
 										README
-###########################################################################################
+#############################################################################################################################################################
 
-This repository contains code for assignment 1 for CSL781: Computer Graphics Course under 
-supervision of Prof. Prem Kalra at Indian Institute of Technology, Delhi.
+This repository contains code for assignment 1 for CSL781: Computer Graphics Course under supervision of Prof. Prem Kalra at Indian Institute of Technology, Delhi.
 
-###########################################################################################
+#############################################################################################################################################################
 Collaborators:
 Shantanu Chaudhary (2010CS50295)
 Mukesh Kumar (2010CS50288)
-###########################################################################################
+#############################################################################################################################################################
 Folder hierarchy:
 Makefile	: For building, cleaning project
 README		: Information about project code
 config.cfg	: Configuration file for setting project parameters (Refer source code for info)
-src			: contains source code files
-obj			: contains object code files (Not under version tracker)
+src		: contains source code files
+obj		: contains object code files (Not under version tracker)
 include		: library headers for the corresponding src code files
-bin			: contains the build binary file (Not under version tracker)
+bin		: contains the build binary file (Not under version tracker)
