@@ -20,7 +20,11 @@ typedef struct config_struct {
 	float viewplane_distance;
 	float frontplane_width;
 	float frontplane_height;
+	float sphereradius;
+	float *spherecenter;
+	float *spherecolor;
 }config;
+
 
 /* Defines a tuple of RBG value
  * */
@@ -76,5 +80,12 @@ typedef struct info_face{
 	int number_of_vertices;
 }face_info;
 
+typedef struct Sphere{
+	//sphere color
+	RGB_value color;
 
+	vertex center;
+
+	float radius;
+}sphere;
 #endif /* STRUCTS_H_ */

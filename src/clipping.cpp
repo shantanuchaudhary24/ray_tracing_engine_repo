@@ -31,7 +31,40 @@ float* plane_equation(face_info* face){
 	eq[2]=u[0]*v[1]-u[1]*v[0];
 	eq[3]=-eq[0]*verts[0].x_pos-eq[1]*verts[0].y_pos-eq[2]*verts[0].z_pos;
 
+	normalizePlane(eq);
 	return eq;
+}
+
+float* dotproduct(vertex* p1,vertex* p2,vertex* p){
+	float* product=(float*)malloc(sizeof(float));
+	*product=(p2->x_pos-p1->x_pos)*(p->x_pos-p2->x_pos)+(p2->y_pos-p1->y_pos)*(p->y_pos-p2->y_pos)+(p2->z_pos-p1->z_pos)*(p->z_pos-p2->z_pos);
+	return product;
+}
+
+float distanceFromPlane(float* plane_eq,vertex* point){
+	return plane_eq[0]*point->x_pos+plane_eq[1]*point->y_pos+plane_eq[2]*point->z_pos+plane_eq[3];
+}
+
+void normalizePlane(float* plane_eq){
+	float normalize= sqrtf((plane_eq[0])*(plane_eq[0])+(plane_eq[1])*(plane_eq[1])+(plane_eq[2])*(plane_eq[2]));
+	plane_eq[0]=plane_eq[0]/normalize;
+	plane_eq[1]=plane_eq[1]/normalize;
+	plane_eq[2]=plane_eq[2]/normalize;
+	plane_eq[3]=plane_eq[3]/normalize;
+}
+bool isOnPlane(vertex* p, face_info* face){
+
+	for(int i=0;i<face->number_of_vertices;i++){
+		vertex* p1 = &face->vertex_set[i];
+		vertex* p2 = &face->vertex_set[(i+1)%face->number_of_vertices];
+
+		float* s1=dotproduct(p1,p2,p);
+		float* s2=dotproduct(p,p1,p2);
+
+		if(s1[0]*s2[0]<0)
+			return false;
+	}
+	return true;
 }
 
 bool isInsidePlane(float* eq_plane,vertex* point){
@@ -42,11 +75,26 @@ bool isInsidePlane(float* eq_plane,vertex* point){
 			return false;
 }
 
+vertex* unitVector(vertex* point){
+	float normalize= sqrtf((point->x_pos)*(point->x_pos)+(point->y_pos)*(point->y_pos)+(point->z_pos)*(point->z_pos));
+	vertex* unitvect=(vertex*)malloc(sizeof(vertex));
+	unitvect->x_pos=(point->x_pos)/normalize;
+	unitvect->y_pos=(point->y_pos)/normalize;
+	unitvect->z_pos=(point->z_pos)/normalize;
+	return unitvect;
+}
+
+vertex* unitVector(vertex* point1,vertex* point2){
+	float normalize=sqrtf((point1->x_pos-point2->x_pos)*(point1->x_pos-point2->x_pos)+(point1->y_pos-point2->y_pos)*(point1->y_pos-point2->y_pos)+(point1->z_pos-point2->z_pos)*(point1->z_pos-point2->z_pos));
+	vertex* unitvect=(vertex*)malloc(sizeof(vertex));
+	unitvect->x_pos=(point1->x_pos-point2->x_pos)/normalize;
+	unitvect->y_pos=(point1->y_pos-point2->y_pos)/normalize;
+	unitvect->z_pos=(point1->z_pos-point2->z_pos)/normalize;
+	return unitvect;
+}
 vertex* findIntersection(float* eq_plane,vertex* point1,vertex* point2){
 
-	float normalize=sqrtf((point1->x_pos-point2->x_pos)*(point1->x_pos-point2->x_pos)+(point1->y_pos-point2->y_pos)*(point1->y_pos-point2->y_pos)+(point1->z_pos-point2->z_pos)*(point1->z_pos-point2->z_pos));
-	vertex* unitvect =new vertex_pt((point1->x_pos-point2->x_pos)/normalize,(point1->y_pos-point2->y_pos)/normalize,(point1->z_pos-point2->z_pos)/normalize);
-
+	vertex* unitvect =unitVector(point1,point2);
 	float a= eq_plane[0]*unitvect->x_pos+eq_plane[1]*unitvect->y_pos+eq_plane[2]*unitvect->z_pos;
 	float b= eq_plane[0]*point1->x_pos+eq_plane[1]*point1->y_pos+eq_plane[2]*point1->z_pos+eq_plane[3];
 

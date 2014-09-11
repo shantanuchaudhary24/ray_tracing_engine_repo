@@ -9,7 +9,6 @@
 #define SCENE_H_
 
 void init(config *ptr);
-
-
+void DrawSphere();
 
 #endif /* SCENE_H_ */

@@ -65,7 +65,7 @@ void read_config(std::ifstream& in, config *out) {
 			std::string firstWord;
 			try {
 				firstWord = str.substr(0,str.find(" "));
-				std::cout << "word: " << firstWord << std::endl;
+				//std::cout << "word: " << firstWord << std::endl;
 			}
 			catch(std::exception& e) {
 				firstWord = str.erase(str.find_first_of(" "),str.find_first_not_of(" "));
@@ -83,6 +83,12 @@ void read_config(std::ifstream& in, config *out) {
 			if(firstWord == "EYE_NORMAL")
 				config_coordinates(str, out->eye_normal);
 
+			if(firstWord == "SPHERE_CENTER")
+				config_coordinates(str, out->spherecenter);
+
+			if(firstWord == "SPHERE_COLOR")
+				config_coordinates(str, out->spherecolor);
+
 			if(firstWord == "FRONTPLANE_DISTANCE")
 				out->frontplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
@@ -97,6 +103,10 @@ void read_config(std::ifstream& in, config *out) {
 
 			if(firstWord == "FRONTPLANE_HEIGHT")
 				out->frontplane_height = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "SPHERE_RADIUS")
+				out->sphereradius = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
 		}
 	}
 }
