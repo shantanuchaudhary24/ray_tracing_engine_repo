@@ -14,10 +14,24 @@
 #include <stdexcept>
 
 /* Typecasts a string into float*/
-float ConvertStringToNumber(const std::string& str)
+float ConvertStringToFloat(const std::string& str)
 {
   std::istringstream ss(str);
   float number = 0;
+  try{
+	  ss >> number;
+  }
+  catch (const std::invalid_argument& ia) {
+  	  std::cerr << "Invalid argument: " << ia.what() << '\n';
+  }
+  return number;
+}
+
+/* Typecasts a string into short int*/
+float ConvertStringToShort(const std::string& str)
+{
+  std::istringstream ss(str);
+  short number = 0;
   try{
 	  ss >> number;
   }
@@ -39,9 +53,9 @@ void config_coordinates(std::string str, float *array)
 
 	if(found1 != std::string::npos && found2 != std::string::npos)
 	{
-		array[0] = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
-		array[1] = ConvertStringToNumber(str.substr(found1 + 2, found2-found1-2));
-		array[2] = ConvertStringToNumber(str.substr(found2 + 2, str.length()-found2 - 2));
+		array[0] = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		array[1] = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-2));
+		array[2] = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
 	}
 }
 
@@ -71,6 +85,11 @@ void read_config(std::ifstream& in, config *out) {
 				firstWord = str.erase(str.find_first_of(" "),str.find_first_not_of(" "));
 			}
 
+			if(firstWord == "WINDOW_WIDTH")
+				out->window_width = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+			if(firstWord == "WINDOW_HEIGHT")
+				out->window_height = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
 			if(firstWord == "EYE_POSITION")
 				config_coordinates(str, out->eye_pos);
 
@@ -90,23 +109,34 @@ void read_config(std::ifstream& in, config *out) {
 				config_coordinates(str, out->spherecolor);
 
 			if(firstWord == "FRONTPLANE_DISTANCE")
-				out->frontplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "BACKPLANE_DISTANCE")
-				out->backplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->backplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "VIEWPLANE_DISTANCE")
-				out->viewplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->viewplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "FRONTPLANE_WIDTH")
-				out->frontplane_width = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_width = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "FRONTPLANE_HEIGHT")
-				out->frontplane_height = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_height = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "SPHERE_RADIUS")
-				out->sphereradius = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->sphereradius = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
+			if(firstWord == "SPECULAR_EXP")
+				out->specular_exp = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "SPECULAR_COEFF")
+				out->specular_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "DIFFUSE_COEFF")
+				out->diffuse_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "AMBIENT_COEFF")
+				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 		}
 	}
 }

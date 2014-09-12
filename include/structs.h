@@ -11,6 +11,12 @@
 
 /* Struct for parsing information from config file*/
 typedef struct config_struct {
+
+	/* OpenGL window size variables*/
+	int window_width;
+	int window_height;
+
+	/* Scene Properties*/
 	float *eye_pos;
 	float *eye_up;
 	float *eye_side;
@@ -23,6 +29,13 @@ typedef struct config_struct {
 	float sphereradius;
 	float *spherecenter;
 	float *spherecolor;
+
+	/* Surface Properties (For all surfaces in the scene)*/
+	float specular_coeff;
+	float specular_exp;
+	float diffuse_coeff;
+	float ambient_coeff;
+
 }config;
 
 
