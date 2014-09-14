@@ -98,6 +98,7 @@
 			glColor3f(face_set[i]->face_color->R_value, face_set[i]->face_color->G_value, face_set[i]->face_color->B_value);
 			//printf("face %d with %d vertices \n",i,face_set[i]->number_of_vertices);
 			glBegin(GL_LINE_LOOP);
+			//glBegin(GL_POLYGON);
 			for(j=0;j<face_set[i]->number_of_vertices;j++)
 				//printf("%f %f %f \n",face_set[i]->vertex_set[j].x_pos, face_set[i]->vertex_set[j].y_pos, face_set[i]->vertex_set[j].z_pos);
 				glVertex3f(face_set[i]->vertex_set[j].x_pos, face_set[i]->vertex_set[j].y_pos, face_set[i]->vertex_set[j].z_pos);

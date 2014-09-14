@@ -17,11 +17,8 @@ extern polygon clippingArea;
 extern float* viewingCordMatrix;
 extern float* inverseviewingCordMatrix;
 
-void transformation(const float* mat){
+void transformation(const float* mat,polygon* poly){
 
-	for(int i=0;i<sceneData.size();i++)
-	{
-		polygon* poly=sceneData.at(i);
 		for(int j=0;j<poly->get_num_faces();j++)
 		{
 			face_info* faces=poly->get_face_set(j);
@@ -31,15 +28,11 @@ void transformation(const float* mat){
 				matrix_mult(verts+k,mat);
 			}
 		}
-	}
 }
 
-void transformationsaveZ(const float* mat){
+void transformationsaveZ(const float* mat,polygon* poly){
 
-	for(int i=0;i<sceneData.size();i++)
-		{
-			polygon* poly=sceneData.at(i);
-			for(int j=0;j<poly->get_num_faces();j++)
+		for(int j=0;j<poly->get_num_faces();j++)
 			{
 				face_info* faces=poly->get_face_set(j);
 				vertex* verts=faces->vertex_set;
@@ -48,56 +41,38 @@ void transformationsaveZ(const float* mat){
 					matrix_multsaveZ(verts+k,mat);
 				}
 			}
-		}
-}
-
-void transformationOnFrustrum(const float* mat){
-
-		for(int j=0;j<clippingArea.get_num_faces();j++)
-		{
-			face_info* faces=clippingArea.get_face_set(j);
-			vertex* verts=faces->vertex_set;
-			for(int k=0;k<faces->number_of_vertices;k++)
-			{
-				matrix_mult(verts+k,mat);
-			}
-		}
-}
-void transformationOnFrustrumsaveZ(const float* mat){
-
-		for(int j=0;j<clippingArea.get_num_faces();j++)
-		{
-			face_info* faces=clippingArea.get_face_set(j);
-			vertex* verts=faces->vertex_set;
-			for(int k=0;k<faces->number_of_vertices;k++)
-			{
-				matrix_multsaveZ(verts+k,mat);
-			}
-		}
 }
 
 void perspective_transformation(float distFromViewingPlane){
 	//TODO
 	const float mat[]={1,0,0,0,0,1,0,0,0,0,1,1/distFromViewingPlane,0,0,0,1};
 
-	transformation(viewingCordMatrix);
-	transformationsaveZ(&mat[0]);
-	transformation(inverseviewingCordMatrix);
+	for(int i=0;i<sceneData.size();i++)
+		{
+			polygon* poly=sceneData.at(i);
+			transformation(viewingCordMatrix,poly);
+			transformation(&mat[0],poly);
+			transformation(inverseviewingCordMatrix,poly);
+		}
 
-	transformationOnFrustrum(viewingCordMatrix);
-	transformationOnFrustrumsaveZ(&mat[0]);
-	transformationOnFrustrum(inverseviewingCordMatrix);
+		transformation(viewingCordMatrix,&clippingArea);
+		transformation(&mat[0],&clippingArea);
+		transformation(inverseviewingCordMatrix,&clippingArea);
 }
 void perspective_projection(float distFromViewingPlane){
 	//TODO
 	const float mat[]={1,0,0,0,0,1,0,0,0,0,0,1/distFromViewingPlane,0,0,0,1};
-	transformation(viewingCordMatrix);
-	transformation(&mat[0]);
-	transformation(inverseviewingCordMatrix);
+	for(int i=0;i<sceneData.size();i++)
+		{
+			polygon* poly=sceneData.at(i);
+			transformation(viewingCordMatrix,poly);
+			transformation(&mat[0],poly);
+			transformation(inverseviewingCordMatrix,poly);
+		}
 
-	transformationOnFrustrum(viewingCordMatrix);
-	transformationOnFrustrum(&mat[0]);
-	transformationOnFrustrum(inverseviewingCordMatrix);
+		transformation(viewingCordMatrix,&clippingArea);
+		transformation(&mat[0],&clippingArea);
+		transformation(inverseviewingCordMatrix,&clippingArea);
 
 }
 
@@ -106,35 +81,39 @@ void normalized_transformation(float width,float height,float near,float far,flo
 	perspective_transformation(distFromViewingPlane);
 
 	const float mat[]={1/width,0,0,0,0,1/height,0,0,0,0,2/(far-near),0,0,0,-distFromViewingPlane,1};
-	transformation(viewingCordMatrix);
-	transformation(&mat[0]);
-	transformation(inverseviewingCordMatrix);
+	for(int i=0;i<sceneData.size();i++)
+	{
+		polygon* poly=sceneData.at(i);
+		transformation(viewingCordMatrix,poly);
+		transformation(&mat[0],poly);
+		transformation(inverseviewingCordMatrix,poly);
+	}
 
-	transformationOnFrustrum(viewingCordMatrix);
-	transformationOnFrustrum(&mat[0]);
-	transformationOnFrustrum(inverseviewingCordMatrix);
+	transformation(viewingCordMatrix,&clippingArea);
+	transformation(&mat[0],&clippingArea);
+	transformation(inverseviewingCordMatrix,&clippingArea);
 
 }
 
-void myTranslatef( float x, float y, float z){
+void myTranslatef( float x, float y, float z,polygon* poly){
     const float mat[] = {1.0,0,0,0,0,1.0,0,0,0,0,1.0,0,x,y,z,1.0};
-    transformation(viewingCordMatrix);
-    transformation(&mat[0]);
-    transformation(inverseviewingCordMatrix);
+    transformation(viewingCordMatrix,poly);
+    transformation(&mat[0],poly);
+    transformation(inverseviewingCordMatrix,poly);
     //glMultMatrixf(&mat[0]);
     return ;
 }
 
-void myScalef(float sx, float sy, float sz){
+void myScalef(float sx, float sy, float sz,polygon* poly){
     const float mat[] = {sx,0,0,0,0,sy,0,0,0,0,sz,0,0,0,0,1.0};
-    transformation(viewingCordMatrix);
-    transformation(&mat[0]);
-    transformation(inverseviewingCordMatrix);
+    transformation(viewingCordMatrix,poly);
+    transformation(&mat[0],poly);
+    transformation(inverseviewingCordMatrix,poly);
     //glMultMatrixf(&mat[0]);
     return ;
 }
 
-void myRotatef(float theta,float px, float py, float pz){
+void myRotatef(float theta,float px, float py, float pz,polygon* poly){
     theta *= M_PI/180;
     float m[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
     float l = sqrt(px*px + py*py + pz*pz);
@@ -154,9 +133,9 @@ void myRotatef(float theta,float px, float py, float pz){
     m[6] = uz*uy*onec + ux*sina;
     m[10] = uz*uz*onec + cosa;
     const float mat[] = {m[0],m[1],m[2],m[3],m[4],m[5],m[6],m[7],m[8],m[9],m[10],m[11],m[12],m[13],m[14],m[15]};
-    transformation(viewingCordMatrix);
-    transformation(&mat[0]);
-    transformation(inverseviewingCordMatrix);
+    transformation(viewingCordMatrix,poly);
+    transformation(&mat[0],poly);
+    transformation(inverseviewingCordMatrix,poly);
     //glMultMatrixf(&mat[0]);
     return ;
 }

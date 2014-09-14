@@ -18,6 +18,7 @@ vector<float*> clipping_plane_eq;
 float* viewingCordMatrix;
 float* inverseviewingCordMatrix;
 GLuint texName;
+std::vector<sphere*> spherearray;
 
 /* For manipulating the rotation of objects
  * */
@@ -91,31 +92,34 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity(); 
 
-	glTranslatef(0,0,-10);
+	glTranslatef(0,0,-12);
 	glScalef(scale_factor,scale_factor,scale_factor);
 	glRotatef(angle_x, 1, 0, 0);
 	glRotatef(angle_y, 0, 1, 0);
 	glRotatef(angle_z, 0, 0, 1);
-	glTranslatef(0,0,10);
-
-	DrawSphere();
+	glTranslatef(0,0,12);
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, texName);
-	face_info* face=clippingArea.get_face_set(0);
+	face_info* face=clippingArea.get_face_set(1);
+	glRotatef(90,0,0,1);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0,0); glVertex3f(face->vertex_set[0].x_pos,face->vertex_set[0].y_pos,face->vertex_set[0].z_pos);
-		glTexCoord2f(0,1); glVertex3f(face->vertex_set[1].x_pos,face->vertex_set[1].y_pos,face->vertex_set[1].z_pos);
-		glTexCoord2f(1,1); glVertex3f(face->vertex_set[2].x_pos,face->vertex_set[2].y_pos,face->vertex_set[2].z_pos);
-		glTexCoord2f(1,0); glVertex3f(face->vertex_set[3].x_pos,face->vertex_set[3].y_pos,face->vertex_set[3].z_pos);
+		glTexCoord2f(1,0); glVertex3f(face->vertex_set[0].x_pos,face->vertex_set[0].y_pos,face->vertex_set[0].z_pos);
+		glTexCoord2f(0,0); glVertex3f(face->vertex_set[1].x_pos,face->vertex_set[1].y_pos,face->vertex_set[1].z_pos);
+		glTexCoord2f(0,1); glVertex3f(face->vertex_set[2].x_pos,face->vertex_set[2].y_pos,face->vertex_set[2].z_pos);
+		glTexCoord2f(1,1); glVertex3f(face->vertex_set[3].x_pos,face->vertex_set[3].y_pos,face->vertex_set[3].z_pos);
 	glEnd();
+	glRotatef(-90,0,0,1);
 	glDisable(GL_TEXTURE_2D);
 
 	clippingArea.draw();
-	for(int i=0;i<sceneData.size();i++)
+	/*for(int i=0;i<sceneData.size();i++)
 		sceneData.at(i)->draw();
 
+	glScalef(1.5,0.5,1);
+		DrawSphere();*/
+		//glScalef(0.5,1,1);
     glFlush();
 }
 
@@ -148,7 +152,7 @@ int main(int argc,char *argv[]){
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(screen_width,screen_height);
     glutInitWindowPosition(screen_width/4,screen_height/4);
-    glutCreateWindow("Polygon Clipping!");
+    glutCreateWindow("Ray Tracing");
     glutSpecialFunc(handleKeypressSpecial);
 
     /* Initialization of functions*/

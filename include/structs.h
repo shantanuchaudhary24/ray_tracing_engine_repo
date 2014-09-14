@@ -81,11 +81,20 @@ typedef struct info_face{
 }face_info;
 
 typedef struct Sphere{
-	//sphere color
+
 	RGB_value color;
 
 	vertex center;
 
 	float radius;
 }sphere;
+
+typedef struct Ray_{
+
+	vertex* direction;
+
+	vertex* startPoint;
+
+}Ray;
+
 #endif /* STRUCTS_H_ */

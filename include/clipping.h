@@ -10,12 +10,12 @@
 
 float* plane_equation(face_info* face);
 void polygonClipping(face_info* face);
-float* dotproduct(vertex* p1,vertex* p2,vertex* p);
+float dotproduct(vertex* p1,vertex* p2,vertex* p);
 bool isOnPlane(vertex* p, face_info* face);
-vertex* findIntersection(float* eq_plane,vertex* point1,vertex* point2);
+vertex* findIntersection(float* eq_plane,Ray* ray);
 vertex* unitVector(vertex* point1,vertex* point2);
 vertex* unitVector(vertex* point);
 float distanceFromPlane(float* plane_eq,vertex* point);
-void normalizePlane(float* plane_eq);
+float* normalizePlane(float* plane_eq);
 
 #endif /* CLIPPING_H_ */

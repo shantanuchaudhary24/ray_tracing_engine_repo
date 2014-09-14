@@ -137,6 +137,13 @@ void InverseMatrix(float* m, float* out)
 
 }
 
+void transpose_matrix(float* mat,float* transpose){
+
+	for(int i=0;i<4;i++)
+			for(int j=0;j<4;j++)
+				mat[4*i+j]=mat[4*j+i];
+}
+
 void matrix_mult(vertex* verts,const float* mat){
 
 	float initial_coordinate[]={verts->x_pos,verts->y_pos,verts->z_pos,1.0f};
