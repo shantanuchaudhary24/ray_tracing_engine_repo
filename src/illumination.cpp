@@ -69,7 +69,7 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
  * intersectionPt	: Pointer to Coordinates of pt. of incidence
  * pt_color			: Pointer to Color of the point of incidence on the surface
  * light_src		: Pointer to data structure of light source
- * spec_coeff		: Surface diffuse reflection coefficient
+ * spec_coeff		: Surface specular reflection coefficient
  * spec_exp			: Specular reflection coefficient
  * */
 RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, vertex *eye_position, RGB_value *pt_color, light* light_src, float spec_coeff, float spec_exp)
@@ -78,7 +78,7 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
 	vertex eye_vector = generate_vector(intersectionPt, eye_position);
 	vertex light_vector = generate_vector(intersectionPt, light_src->position );
 	float cos_theta = dot_product(&light_vector, normal_vector);
-	vertex temp_vector = vertex(2*cos_theta*light_vector.x_pos, 2*cos_theta*light_vector.y_pos, 2*cos_theta*light_vector.z_pos);
+	vertex temp_vector = vertex(2*cos_theta*normal_vector->x_pos, 2*cos_theta*normal_vector->y_pos, 2*cos_theta*normal_vector->z_pos);
 	vertex reflection_vector = generate_vector(&light_vector,&temp_vector);
 	float cos_alpha = dot_product(&reflection_vector, &eye_vector);
 	color_vector.R_value = pow(spec_coeff,spec_exp)*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
@@ -93,7 +93,7 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
  * intersectionPt	: Pointer to Coordinates of pt. of incidence
  * pt_color			: Pointer to Color of the point of incidence on the surface
  * light_src		: Pointer to data structure of light source
- * diff_coeff		: Surface diffuse reflection coefficient
+ * ambi_coeff		: Surface ambient reflection coefficient
  * */
 RGB_value ambient_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_value *pt_color, light* light_src, float ambi_coeff)
 {
