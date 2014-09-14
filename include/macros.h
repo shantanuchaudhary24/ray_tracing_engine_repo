@@ -6,5 +6,7 @@
  */
 
 //#define DEBUG 1
+#define DEBUG_DIFFUSE 1
+#define DEBUG_SPECULAR 1
+#define DEBUG_AMBIENT 1
 
-#define nl std::endl

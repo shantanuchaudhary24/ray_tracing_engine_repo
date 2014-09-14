@@ -147,23 +147,31 @@ float* projection(Ray* ray)
 						normalpoint->y_pos=plane_eq[1];
 						normalpoint->z_pos=plane_eq[2];
 						//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
-						RGB_value diff_color= diffuse_reflection(normalpoint,intersectionPoint,face->face_color,lightInfo,diffuse_coeff);
-						RGB_value spec_color= specular_reflection(normalpoint, intersectionPoint, ray->startPoint, face->face_color, lightInfo, spec_coeff, spec_expo);
-						RGB_value amb_color= ambient_reflection( normalpoint, intersectionPoint,face->face_color,lightInfo,amb_coeff);
+//						RGB_value diff_color= diffuse_reflection(normalpoint,intersectionPoint,face->face_color,lightInfo,diffuse_coeff);
+//						RGB_value spec_color= specular_reflection(normalpoint, intersectionPoint, ray->startPoint, face->face_color, lightInfo, spec_coeff, spec_expo);
+//						RGB_value amb_color= ambient_reflection( normalpoint, intersectionPoint,face->face_color,lightInfo,amb_coeff);
+//
+//						cout<< diff_color.R_value << diff_color.G_value << diff_color.B_value<<endl;
+//						cout<< spec_color.R_value << spec_color.G_value << spec_color.B_value<<endl;
+//						cout<< amb_color.R_value << amb_color.G_value << amb_color.B_value<<endl;
+//						exit(0);
+//						RGB_value final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
+//														diff_color.G_value+spec_color.G_value+amb_color.G_value,
+//														diff_color.B_value+spec_color.B_value+amb_color.B_value);
+//						final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+//						final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+//						final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+//						color[0]=255*final_color.R_value;
+//						color[1]=255*final_color.G_value;
+//						color[2]=255*final_color.B_value;
 
-						cout<< diff_color.R_value << diff_color.G_value << diff_color.B_value<<endl;
-						cout<< spec_color.R_value << spec_color.G_value << spec_color.B_value<<endl;
-						cout<< amb_color.R_value << amb_color.G_value << amb_color.B_value<<endl;
+						RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, face->face_color, lightInfo,
+																diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
+						color[0] = final_color.R_value;
+						color[1] = final_color.G_value;
+						color[2] = final_color.B_value;
 						exit(0);
-						RGB_value final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
-														diff_color.G_value+spec_color.G_value+amb_color.G_value,
-														diff_color.B_value+spec_color.B_value+amb_color.B_value);
-						final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-						final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-						final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-						color[0]=255*final_color.R_value;
-						color[1]=255*final_color.G_value;
-						color[2]=255*final_color.B_value;
+
 					}
 				}
 			}
@@ -216,7 +224,11 @@ float* projection(Ray* ray)
 				normalpoint->z_pos=(intersectionPoint->z_pos-sphere1->center.z_pos)/sphere1->radius;
 				matrix_mult(normalpoint,mat);
 				matrix_mult(normalpoint,matTranspose);
-
+//				RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), lightInfo,
+//														diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
+//				color[0] = final_color.R_value;
+//				color[1] = final_color.G_value;
+//				color[2] = final_color.B_value;
 				color[0]=255*sphere1->color.R_value;
 				color[1]=255*sphere1->color.G_value;
 				color[2]=255*sphere1->color.B_value;

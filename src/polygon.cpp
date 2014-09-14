@@ -105,24 +105,6 @@
 			glEnd();
 		}
 	}
-/* Debugging the drawing operation*/
-#ifdef DEBUG
-		for (i=0;i<face_set.size();i++)
-		{
-			std::cout << "Face :" << i+1 << "\n"  ;
-			for(j=0;j<face_set[i]->number_of_vertices;j++)
-			{
-				std::cout << "Vertex " << j << " coordinates:\n";
-				std::cout << "( " ;
-				std::cout << face_set[i]->vertex_set[j].x_pos << ", ";
-				std::cout << face_set[i]->vertex_set[j].y_pos << ", ";
-				std::cout << face_set[i]->vertex_set[j].z_pos << " ";
-				std::cout << ")\n" ;
-			}
-		}
-		exit(0);
-	}
-#endif
 
 	/* Shift the object by specified units
 	 * a : in X direction
