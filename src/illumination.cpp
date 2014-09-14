@@ -38,7 +38,11 @@ void print_vertex(vertex *pt)
  * */
 vertex generate_vector(vertex* init_vertex, vertex* final_vertex)
 {
-	return vertex(final_vertex->x_pos - init_vertex->x_pos, final_vertex->y_pos - init_vertex->y_pos, final_vertex->z_pos - init_vertex->z_pos);
+
+	float normal_factor = sqrt(pow(final_vertex->x_pos - init_vertex->x_pos,2)+pow(final_vertex->y_pos - init_vertex->y_pos,2)+pow(final_vertex->z_pos - init_vertex->z_pos,2));
+	return vertex((final_vertex->x_pos - init_vertex->x_pos)/normal_factor,
+				(final_vertex->y_pos - init_vertex->y_pos)/normal_factor,
+				(final_vertex->z_pos - init_vertex->z_pos)/normal_factor);
 }
 
 /* Returns the dot product of two vectors
@@ -47,7 +51,14 @@ vertex generate_vector(vertex* init_vertex, vertex* final_vertex)
  * */
 float dot_product(vertex *vector1, vertex *vector2)
 {
-	return(vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos );
+//	std::cout << "DOT_PRODUCT" << std::endl;
+//	print_vertex(vector1);
+//	print_vertex(vector2);
+	float result = vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos;
+	if (result < 0)
+		return result*(-1);
+	else
+	return result;
 }
 
 /* Following function calculates the length of the vector between
@@ -101,13 +112,23 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 	std::cout << "Light RGB Vector: " ;
 	print_color(light_src->color);
 
+	std::cout << "Distance of Light Source: " ;
+	std::cout << distance_light << std::endl;
+
 	std::cout << "Light Attenuation Vector: " ;
 	std::cout << light_src->att_factor[0] << " , ";
 	std::cout << light_src->att_factor[1]<< " , ";
 	std::cout << light_src->att_factor[2]<< std::endl;
 
+	std::cout << "Calculated Attenuation Factor: " ;
+	std::cout << att_factor << std::endl;
+
 	std::cout << "Diffused Reflection Coefficient: ";
 	std::cout << diff_coeff << std::endl;
+
+	// TODO
+	std::cout << "Calculated cos_theta Factor: " ;
+	std::cout << cos_theta << std::endl;
 
 	std::cout << "Calculated Diffused Reflection Color Vector: " ;
 	print_color(&color_vector);
@@ -157,16 +178,17 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
 	std::cout << "Light RGB Vector: " ;
 	print_color(light_src->color);
 
-	std::cout << "Light Attenuation Vector: " ;
-	std::cout << light_src->att_factor[0] << " , ";
-	std::cout << light_src->att_factor[1]<< " , ";
-	std::cout << light_src->att_factor[2]<< std::endl;
-
 	std::cout << "Specular Reflection Coefficient: ";
 	std::cout << specular_coeff << std::endl;
 
 	std::cout << "Specular Reflection Exponent: ";
 	std::cout << spec_exp << std::endl;
+
+	std::cout << "Calculated cos_theta Factor: " ;
+	std::cout << cos_theta << std::endl;
+
+	std::cout << "Calculated cos_alpha Factor: " ;
+	std::cout << cos_alpha << std::endl;
 
 	std::cout << "Calculated Specular Reflection Color Vector: " ;
 	print_color(&color_vector);
@@ -208,11 +230,6 @@ RGB_value ambient_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 
 	std::cout << "Light RGB Vector: " ;
 	print_color(light_src->color);
-
-	std::cout << "Light Attenuation Vector: " ;
-	std::cout << light_src->att_factor[0] << " , ";
-	std::cout << light_src->att_factor[1]<< " , ";
-	std::cout << light_src->att_factor[2]<< std::endl;
 
 	std::cout << "Ambient Reflection Coefficient: ";
 	std::cout << ambi_coeff << std::endl;

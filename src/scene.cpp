@@ -170,7 +170,11 @@ float* projection(Ray* ray)
 						color[0] = final_color.R_value;
 						color[1] = final_color.G_value;
 						color[2] = final_color.B_value;
-						exit(0);
+//						exit(0);
+
+//						color[0]=255*face->face_color->R_value;
+//						color[1]=255*face->face_color->G_value;
+//						color[2]=255*face->face_color->B_value;
 
 					}
 				}
@@ -229,9 +233,9 @@ float* projection(Ray* ray)
 //				color[0] = final_color.R_value;
 //				color[1] = final_color.G_value;
 //				color[2] = final_color.B_value;
-				color[0]=255*sphere1->color.R_value;
-				color[1]=255*sphere1->color.G_value;
-				color[2]=255*sphere1->color.B_value;
+//				color[0]=255*sphere1->color.R_value;
+//				color[1]=255*sphere1->color.G_value;
+//				color[2]=255*sphere1->color.B_value;
 			}
 		}
 		return color;
