@@ -19,7 +19,6 @@ float* viewingCordMatrix;
 float* inverseviewingCordMatrix;
 GLuint texName;
 std::vector<sphere*> spherearray;
-
 /* For manipulating the rotation of objects
  * */
 float angle_x = 0;
@@ -128,9 +127,15 @@ int main(int argc,char *argv[]){
 	/* Input file descriptor*/
 	std::ifstream inp;
 
+	/* Default dimensions of OpenGL window */
+	int screen_width = 1366 ;
+	int screen_height = 768 ;
+
 	/* Initialization of configuration structure and memory allocation*/
 	config *outp;
 	outp = (config *)malloc(sizeof(config));
+	outp->window_width = 0;
+	outp->window_height = 0;
 	outp->eye_pos = (float *)malloc(3*sizeof(float));
 	outp->eye_up = (float *)malloc(3*sizeof(float));
 	outp->eye_side = (float *)malloc(3*sizeof(float));
@@ -143,9 +148,39 @@ int main(int argc,char *argv[]){
 	outp->sphereradius = 0;
 	outp->spherecenter = (float *)malloc(3*sizeof(float));
 	outp->spherecolor =(float *)malloc(3*sizeof(float));
+	outp->specular_coeff = 0;
+	outp->specular_exp = 0;
+	outp->ambient_coeff = 0;
+	outp->diffuse_coeff = 0;
+	outp->light_source = (light *)malloc(sizeof(light));
+	outp->light_source->position = (vertex *)malloc(sizeof(vertex));
+	outp->light_source->att_factor = (float *)malloc(3*sizeof(float));
+	outp->light_source->color = (RGB_value *)malloc(sizeof(RGB_value));
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
+
+//	cout<< outp->light_source->position->x_pos << std::endl;
+//	cout<< outp->light_source->position->y_pos << std::endl;
+//	cout<< outp->light_source->position->z_pos << std::endl;
+//
+//	cout<< outp->light_source->color->R_value << std::endl;
+//	cout<< outp->light_source->color->R_value<< std::endl;
+//	cout<< outp->light_source->color->R_value<< std::endl;
+//
+//	cout<< outp->light_source->att_factor[0] << std::endl;
+//	cout<< outp->light_source->att_factor[1] << std::endl;
+//	cout<< outp->light_source->att_factor[2] << std::endl;
+//
+//	exit(0);
+
+	/* Set window dimensions from configuration file*/
+	screen_width  = outp->window_width;
+	screen_height = outp->window_height;
+
+	/* Initial spawning position of GLUT window*/
+	int window_position_x = screen_width/4;
+	int window_position_y = screen_height/6;
 
 	/* Preliminary OpenGL calls*/
 	glutInit(&argc,argv);

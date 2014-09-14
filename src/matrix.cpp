@@ -7,7 +7,6 @@
 
 #include "../include/headers.h"
 #include "../include/structs.h"
-#include "../include/matrix.h"
 
 
 //Inverse of matrix

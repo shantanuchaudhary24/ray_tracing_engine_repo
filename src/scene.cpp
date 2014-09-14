@@ -12,9 +12,9 @@
 #include "../include/transformations.h"
 #include "../include/frustum.h"
 #include "../include/clipping.h"
-#include "../include/scene.h"
+#include "../include/illumination.h"
 
-
+using namespace std;
 extern std::vector<polygon*> sceneData;
 extern polygon clippingArea;
 extern std::vector<float*> clipping_plane_eq;
@@ -26,6 +26,12 @@ sphere* sphere1;
 float* matInverse;
 float* matTranspose;
 float* mat;
+float diffuse_coeff;
+float spec_coeff;
+float amb_coeff;
+float spec_expo;
+light* lightInfo;
+
 void create_scene(){
 	RGB_value color1 = color_comp(1.0f,0.0f,0.0f);
 
@@ -141,9 +147,23 @@ float* projection(Ray* ray)
 						normalpoint->y_pos=plane_eq[1];
 						normalpoint->z_pos=plane_eq[2];
 						//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
-						color[0]=255*face->face_color->R_value;
-						color[1]=255*face->face_color->G_value;
-						color[2]=255*face->face_color->B_value;
+						RGB_value diff_color= diffuse_reflection(normalpoint,intersectionPoint,face->face_color,lightInfo,diffuse_coeff);
+						RGB_value spec_color= specular_reflection(normalpoint, intersectionPoint, ray->startPoint, face->face_color, lightInfo, spec_coeff, spec_expo);
+						RGB_value amb_color= ambient_reflection( normalpoint, intersectionPoint,face->face_color,lightInfo,amb_coeff);
+
+						cout<< diff_color.R_value << diff_color.G_value << diff_color.B_value<<endl;
+						cout<< spec_color.R_value << spec_color.G_value << spec_color.B_value<<endl;
+						cout<< amb_color.R_value << amb_color.G_value << amb_color.B_value<<endl;
+						exit(0);
+						RGB_value final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
+														diff_color.G_value+spec_color.G_value+amb_color.G_value,
+														diff_color.B_value+spec_color.B_value+amb_color.B_value);
+						final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+						final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+						final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+						color[0]=255*final_color.R_value;
+						color[1]=255*final_color.G_value;
+						color[2]=255*final_color.B_value;
 					}
 				}
 			}
@@ -268,7 +288,7 @@ void init(config *ptr){
 	float d1=ptr->frontplane_distance;		//distance of front plane from eye
 	float d2=ptr->backplane_distance;		//distance of back plane from eye
 	float d3=ptr->viewplane_distance;		//distance of view plane from eye
-	float width=ptr->frontplane_width;	//width and height of front plane
+	float width=ptr->frontplane_width;		//width and height of front plane
 	float height=ptr->frontplane_height;
 	float midpointViewPlane[]={eye[0]+d3*eyenormal[0],eye[1]+d3*eyenormal[1],eye[2]+d3*eyenormal[2]};		//midpoint of view plane
 	float rdash[]={0,0,0};
@@ -276,13 +296,34 @@ void init(config *ptr){
 	sphere1->center=vertex(ptr->spherecenter[0],ptr->spherecenter[1],ptr->spherecenter[2]);
 	sphere1->color= color_comp(ptr->spherecolor[0],ptr->spherecolor[1],ptr->spherecolor[2]);
 	sphere1->radius=ptr->sphereradius;
+	diffuse_coeff=ptr->diffuse_coeff;
+	spec_coeff=ptr->specular_coeff;
+	amb_coeff=ptr->ambient_coeff;
+	spec_expo=ptr->specular_exp;
+	lightInfo=ptr->light_source;
 
-		for(int j=0;j<3;j++)
-			rdash[0]+=-midpointViewPlane[j]*eyeside[j];
-		for(int j=0;j<3;j++)
-			rdash[1]+=-midpointViewPlane[j]*eyeup[j];
-		for(int j=0;j<3;j++)
-			rdash[2]+=-midpointViewPlane[j]*eyenormal[j];
+//	cout<< lightInfo->position->x_pos << std::endl;
+//	cout<< lightInfo->position->y_pos << std::endl;
+//	cout<< lightInfo->position->z_pos << std::endl;
+//
+//	cout<< lightInfo->color->R_value << std::endl;
+//	cout<< lightInfo->color->R_value<< std::endl;
+//	cout<< lightInfo->color->R_value<< std::endl;
+//
+//	cout<< lightInfo->att_factor[0] << std::endl;
+//	cout<< lightInfo->att_factor[1] << std::endl;
+//	cout<< lightInfo->att_factor[2] << std::endl;
+//
+//	exit(0);
+
+
+
+	for(int j=0;j<3;j++)
+		rdash[0]+=-midpointViewPlane[j]*eyeside[j];
+	for(int j=0;j<3;j++)
+		rdash[1]+=-midpointViewPlane[j]*eyeup[j];
+	for(int j=0;j<3;j++)
+		rdash[2]+=-midpointViewPlane[j]*eyenormal[j];
 
 	float Matrix[]={eyeside[0],eyeup[0],eyenormal[0],0,eyeside[1],eyeup[1],eyenormal[1],0,eyeside[2],eyeup[2],eyenormal[2],0,rdash[0],rdash[1],rdash[2],1};
 

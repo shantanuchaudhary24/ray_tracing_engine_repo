@@ -14,7 +14,7 @@
 #include <stdexcept>
 
 /* Typecasts a string into float*/
-float ConvertStringToNumber(const std::string& str)
+float ConvertStringToFloat(const std::string& str)
 {
   std::istringstream ss(str);
   float number = 0;
@@ -27,7 +27,21 @@ float ConvertStringToNumber(const std::string& str)
   return number;
 }
 
-/* This function takes an input string and separated the CSV of coordinates
+/* Typecasts a string into short int*/
+float ConvertStringToShort(const std::string& str)
+{
+  std::istringstream ss(str);
+  short number = 0;
+  try{
+	  ss >> number;
+  }
+  catch (const std::invalid_argument& ia) {
+  	  std::cerr << "Invalid argument: " << ia.what() << '\n';
+  }
+  return number;
+}
+
+/* This function takes an input string and separates the CSV of coordinates
  * passed to it in the form of string and typecasts the individual coordinates
  * and stores them into the array passed to it.
  *
@@ -39,9 +53,63 @@ void config_coordinates(std::string str, float *array)
 
 	if(found1 != std::string::npos && found2 != std::string::npos)
 	{
-		array[0] = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
-		array[1] = ConvertStringToNumber(str.substr(found1 + 2, found2-found1-2));
-		array[2] = ConvertStringToNumber(str.substr(found2 + 2, str.length()-found2 - 2));
+		array[0] = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		array[1] = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-2));
+		array[2] = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes an input string and separates the CSV of coordinates
+ * passed to it in the form of string and typecasts the individual coordinates
+ * and stores them into the array passed to it.
+ *
+ * */
+void config_vertex(std::string str, vertex *pt)
+{
+	size_t found1 = str.find_first_of(",");
+	size_t found2 = str.find_last_of(",");
+
+	if(found1 != std::string::npos && found2 != std::string::npos)
+	{
+		pt->x_pos = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		pt->y_pos = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
+		pt->z_pos = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes an input string and separates the CSV of coordinates
+ * passed to it in the form of string and typecasts the individual coordinates
+ * and stores them into the array passed to it.
+ *
+ * */
+void config_color(std::string str, RGB_value *color)
+{
+	size_t found1 = str.find_first_of(",");
+	size_t found2 = str.find_last_of(",");
+
+	if(found1 != std::string::npos && found2 != std::string::npos)
+	{
+		color->R_value = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		color->G_value = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
+		color->B_value = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes input string and parses the CSV which
+ * express the properties of light.
+ * */
+void addLightSource(std::string str, light *src)
+{
+	size_t found11 = str.find_first_of("<");
+	size_t found12 = str.find_first_of(">");
+	size_t found21 = str.find_last_of("<");
+	size_t found22 = str.find_last_of(">");
+
+	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
+	{
+		config_vertex(str.substr(found11,found12 - found11),src->position);
+		config_color(str.substr(found12+3,found21 - found12-5),src->color);
+		config_coordinates(str.substr(found21,found22 - found21 -1),src->att_factor);
 	}
 }
 
@@ -71,6 +139,12 @@ void read_config(std::ifstream& in, config *out) {
 				firstWord = str.erase(str.find_first_of(" "),str.find_first_not_of(" "));
 			}
 
+			if(firstWord == "WINDOW_WIDTH")
+				out->window_width = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "WINDOW_HEIGHT")
+				out->window_height = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
 			if(firstWord == "EYE_POSITION")
 				config_coordinates(str, out->eye_pos);
 
@@ -84,19 +158,19 @@ void read_config(std::ifstream& in, config *out) {
 				config_coordinates(str, out->eye_normal);
 
 			if(firstWord == "FRONTPLANE_DISTANCE")
-				out->frontplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "BACKPLANE_DISTANCE")
-				out->backplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->backplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "VIEWPLANE_DISTANCE")
-				out->viewplane_distance = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->viewplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "FRONTPLANE_WIDTH")
-				out->frontplane_width = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_width = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "FRONTPLANE_HEIGHT")
-				out->frontplane_height = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->frontplane_height = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
 			if(firstWord == "SPHERE_CENTER")
 				config_coordinates(str, out->spherecenter);
@@ -105,8 +179,22 @@ void read_config(std::ifstream& in, config *out) {
 				config_coordinates(str, out->spherecolor);
 
 			if(firstWord == "SPHERE_RADIUS")
-				out->sphereradius = ConvertStringToNumber(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->sphereradius = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
+			if(firstWord == "SPECULAR_EXP")
+				out->specular_exp = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "SPECULAR_COEFF")
+				out->specular_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "DIFFUSE_COEFF")
+				out->diffuse_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "AMBIENT_COEFF")
+				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "LIGHT_SOURCE")
+				addLightSource(str, out->light_source);
 		}
 	}
 }

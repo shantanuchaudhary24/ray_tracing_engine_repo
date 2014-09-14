@@ -8,7 +8,6 @@
 #include "../include/headers.h"
 #include "../include/macros.h"
 #include "../include/structs.h"
-#include "../include/frustum.h"
 
 float* create_frustrum(float* eye,float* eyenormal,float* eyeup,float* eyeside,float d1,float d2,float width,float height){
 
