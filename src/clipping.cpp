@@ -76,13 +76,11 @@ bool isInsidePlane(float* eq_plane,vertex* point){
 			return false;
 }
 
-vertex* unitVector(vertex* point){
+void unitVector(vertex* point){
 	float normalize= sqrtf((point->x_pos)*(point->x_pos)+(point->y_pos)*(point->y_pos)+(point->z_pos)*(point->z_pos));
-	vertex* unitvect=(vertex*)malloc(sizeof(vertex));
-	unitvect->x_pos=(point->x_pos)/normalize;
-	unitvect->y_pos=(point->y_pos)/normalize;
-	unitvect->z_pos=(point->z_pos)/normalize;
-	return unitvect;
+	point->x_pos=(point->x_pos)/normalize;
+	point->y_pos=(point->y_pos)/normalize;
+	point->z_pos=(point->z_pos)/normalize;
 }
 
 vertex* unitVector(vertex* point1,vertex* point2){

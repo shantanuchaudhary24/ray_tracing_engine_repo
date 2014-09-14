@@ -147,30 +147,13 @@ float* projection(Ray* ray)
 						normalpoint->y_pos=plane_eq[1];
 						normalpoint->z_pos=plane_eq[2];
 						//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
-//						RGB_value diff_color= diffuse_reflection(normalpoint,intersectionPoint,face->face_color,lightInfo,diffuse_coeff);
-//						RGB_value spec_color= specular_reflection(normalpoint, intersectionPoint, ray->startPoint, face->face_color, lightInfo, spec_coeff, spec_expo);
-//						RGB_value amb_color= ambient_reflection( normalpoint, intersectionPoint,face->face_color,lightInfo,amb_coeff);
-//
-//						cout<< diff_color.R_value << diff_color.G_value << diff_color.B_value<<endl;
-//						cout<< spec_color.R_value << spec_color.G_value << spec_color.B_value<<endl;
-//						cout<< amb_color.R_value << amb_color.G_value << amb_color.B_value<<endl;
-//						exit(0);
-//						RGB_value final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
-//														diff_color.G_value+spec_color.G_value+amb_color.G_value,
-//														diff_color.B_value+spec_color.B_value+amb_color.B_value);
-//						final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-//						final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-//						final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-//						color[0]=255*final_color.R_value;
-//						color[1]=255*final_color.G_value;
-//						color[2]=255*final_color.B_value;
 
 						RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, face->face_color, lightInfo,
 																diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
-						color[0] = final_color.R_value;
-						color[1] = final_color.G_value;
-						color[2] = final_color.B_value;
-//						exit(0);
+						color[0] = 255*final_color.R_value;
+						color[1] = 255*final_color.G_value;
+						color[2] = 255*final_color.B_value;
+					//	exit(0);
 
 //						color[0]=255*face->face_color->R_value;
 //						color[1]=255*face->face_color->G_value;
@@ -182,8 +165,8 @@ float* projection(Ray* ray)
 		}
 
 
-		vertex* R0=ray2->startPoint;
-		vertex* Rd=ray2->direction;
+		vertex* R0=ray->startPoint;
+		vertex* Rd=ray->direction;
 		matrix_mult(R0,matInverse);
 		float B=2*(Rd->x_pos*(R0->x_pos-sphere1->center.x_pos)+Rd->y_pos*(R0->y_pos-sphere1->center.y_pos)+Rd->z_pos*(R0->z_pos-sphere1->center.z_pos));
 		float C= (R0->x_pos-sphere1->center.x_pos)*(R0->x_pos-sphere1->center.x_pos)+
@@ -217,22 +200,25 @@ float* projection(Ray* ray)
 			if(t!=0 && currdist<distancePlane)
 			{
 				distancePlane=currdist;
-				matrix_mult(temp,mat);
+				//matrix_mult(temp,matInverse);
 				//intersectionpoint=initialintersectionpoint*M;
 				intersectionPoint=temp;
-				//printf("intersectionPoint with            sphere: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
+				//printf("intersectionPoint with sphere: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
 
-				// normal= initialnormal*M*(Transpose(Inverse(M)))
 				normalpoint->x_pos=(intersectionPoint->x_pos-sphere1->center.x_pos)/sphere1->radius;
 				normalpoint->y_pos=(intersectionPoint->y_pos-sphere1->center.y_pos)/sphere1->radius;
 				normalpoint->z_pos=(intersectionPoint->z_pos-sphere1->center.z_pos)/sphere1->radius;
-				matrix_mult(normalpoint,mat);
-				matrix_mult(normalpoint,matTranspose);
-//				RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), lightInfo,
-//														diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
-//				color[0] = final_color.R_value;
-//				color[1] = final_color.G_value;
-//				color[2] = final_color.B_value;
+				// normal= initialnormal*(Transpose(Inverse(M)))
+				//matrix_mult(normalpoint,matTranspose);
+				unitVector(normalpoint);
+
+				RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), lightInfo,
+														diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
+
+				color[0] = 255*final_color.R_value;
+				color[1] = 255*final_color.G_value;
+				color[2] = 255*final_color.B_value;
+
 //				color[0]=255*sphere1->color.R_value;
 //				color[1]=255*sphere1->color.G_value;
 //				color[2]=255*sphere1->color.B_value;
@@ -318,22 +304,6 @@ void init(config *ptr){
 	spec_expo=ptr->specular_exp;
 	lightInfo=ptr->light_source;
 
-//	cout<< lightInfo->position->x_pos << std::endl;
-//	cout<< lightInfo->position->y_pos << std::endl;
-//	cout<< lightInfo->position->z_pos << std::endl;
-//
-//	cout<< lightInfo->color->R_value << std::endl;
-//	cout<< lightInfo->color->R_value<< std::endl;
-//	cout<< lightInfo->color->R_value<< std::endl;
-//
-//	cout<< lightInfo->att_factor[0] << std::endl;
-//	cout<< lightInfo->att_factor[1] << std::endl;
-//	cout<< lightInfo->att_factor[2] << std::endl;
-//
-//	exit(0);
-
-
-
 	for(int j=0;j<3;j++)
 		rdash[0]+=-midpointViewPlane[j]*eyeside[j];
 	for(int j=0;j<3;j++)
@@ -384,12 +354,12 @@ void init(config *ptr){
 			clipping_plane_eq.push_back(plane_equation(clippingArea.get_face_set(i)));
 		}
 
-		for(int i=0;i<sceneData.size();i++){
+		/*for(int i=0;i<sceneData.size();i++){
 				polygon* poly=sceneData.at(i);
 				for(int j=0;j<poly->get_num_faces();j++){
-					//polygonClipping(poly->get_face_set(j));
+					polygonClipping(poly->get_face_set(j));
 				}
-			}
+			}*/
 
 	float leftTopCoord[3];		//top left coordinate of front plane
 
@@ -397,7 +367,7 @@ void init(config *ptr){
 	for(int i=0;i<3;i++)
 		leftTopCoord[i]=eye[i]+eyenormal[i]*d1+Sneg[i];
 
-	int N=200;
+	int N=300;
 	float pixel[3];
 	GLubyte texture[N+1][N+1][4];
 	float mattemp[] = {1.5,0,0,0,0,0.5,0,0,0,0,1,0,0,0,0,1.0};
@@ -439,8 +409,6 @@ void init(config *ptr){
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, N+1,
 				N+1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 				texture);
-
-
 
 	//normalized_transformation((d3*width)/d1,(d3*height)/d1,d1,d2,d3);
 	//perspective_transformation(d3);

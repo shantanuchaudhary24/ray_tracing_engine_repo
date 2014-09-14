@@ -112,13 +112,15 @@ void display(void){
 	glRotatef(-90,0,0,1);
 	glDisable(GL_TEXTURE_2D);
 
-	clippingArea.draw();
+	//clippingArea.draw();
+
 	/*for(int i=0;i<sceneData.size();i++)
 		sceneData.at(i)->draw();
 
 	glScalef(1.5,0.5,1);
 		DrawSphere();*/
 		//glScalef(0.5,1,1);
+
     glFlush();
 }
 
@@ -159,20 +161,6 @@ int main(int argc,char *argv[]){
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
-
-//	cout<< outp->light_source->position->x_pos << std::endl;
-//	cout<< outp->light_source->position->y_pos << std::endl;
-//	cout<< outp->light_source->position->z_pos << std::endl;
-//
-//	cout<< outp->light_source->color->R_value << std::endl;
-//	cout<< outp->light_source->color->R_value<< std::endl;
-//	cout<< outp->light_source->color->R_value<< std::endl;
-//
-//	cout<< outp->light_source->att_factor[0] << std::endl;
-//	cout<< outp->light_source->att_factor[1] << std::endl;
-//	cout<< outp->light_source->att_factor[2] << std::endl;
-//
-//	exit(0);
 
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;

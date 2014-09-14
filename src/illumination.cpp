@@ -55,9 +55,9 @@ float dot_product(vertex *vector1, vertex *vector2)
 //	print_vertex(vector1);
 //	print_vertex(vector2);
 	float result = vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos;
-	if (result < 0)
-		return result*(-1);
-	else
+//	if (result < 0)
+//		return result*(-1);
+//	else
 	return result;
 }
 
@@ -87,12 +87,19 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 	vertex light_vector = generate_vector(intersectionPt, light_src->position );
 	float distance_light = vector_length(light_src->position, intersectionPt);
 	float cos_theta = dot_product(&light_vector, normal_vector);
+	if(cos_theta>0){
 	float att_factor = (light_src->att_factor[0] + light_src->att_factor[1]*distance_light + light_src->att_factor[2]*distance_light*distance_light);
 	att_factor = 1/att_factor;
 	diff_coeff = diff_coeff/att_factor;
 	color_vector.R_value = diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
 	color_vector.G_value = diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
 	color_vector.B_value = diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
+	}
+	else{
+		color_vector.R_value = 0;
+		color_vector.G_value = 0;
+		color_vector.B_value = 0;
+	}
 
 	/* For debugging colors*/
 #ifdef DEBUG_DIFFUSE
@@ -153,12 +160,19 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
 	vertex eye_vector = generate_vector(intersectionPt, eye_position);
 	vertex light_vector = generate_vector(intersectionPt, light_src->position );
 	float cos_theta = dot_product(&light_vector, normal_vector);
+	if(cos_theta>0){
 	vertex temp_vector = vertex(2*cos_theta*normal_vector->x_pos, 2*cos_theta*normal_vector->y_pos, 2*cos_theta*normal_vector->z_pos);
 	vertex reflection_vector = generate_vector(&light_vector,&temp_vector);
 	float cos_alpha = dot_product(&reflection_vector, &eye_vector);
 	color_vector.R_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
 	color_vector.G_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
 	color_vector.B_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
+	}
+	else{
+		color_vector.R_value = 0;
+		color_vector.G_value = 0;
+		color_vector.B_value = 0;
+	}
 
 	/* For debugging colors*/
 #ifdef DEBUG_SPECULAR
@@ -209,6 +223,7 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
 RGB_value ambient_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_value *pt_color, light* light_src, float ambi_coeff)
 {
 	RGB_value color_vector = RGB_value(0,0,0);
+
 	color_vector.R_value = ambi_coeff*(pt_color->R_value)*(light_src->color->R_value);
 	color_vector.G_value = ambi_coeff*(pt_color->G_value)*(light_src->color->G_value);
 	color_vector.B_value = ambi_coeff*(pt_color->B_value)*(light_src->color->B_value);

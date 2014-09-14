@@ -14,7 +14,7 @@ float dotproduct(vertex* p1,vertex* p2,vertex* p);
 bool isOnPlane(vertex* p, face_info* face);
 vertex* findIntersection(float* eq_plane,Ray* ray);
 vertex* unitVector(vertex* point1,vertex* point2);
-vertex* unitVector(vertex* point);
+void unitVector(vertex* point);
 float distanceFromPlane(float* plane_eq,vertex* point);
 float* normalizePlane(float* plane_eq);
 
