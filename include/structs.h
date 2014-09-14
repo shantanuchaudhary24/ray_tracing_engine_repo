@@ -8,37 +8,6 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
-
-/* Struct for parsing information from config file*/
-typedef struct config_struct {
-
-	/* OpenGL window size variables*/
-	int window_width;
-	int window_height;
-
-	/* Scene Properties*/
-	float *eye_pos;
-	float *eye_up;
-	float *eye_side;
-	float *eye_normal;
-	float backplane_distance;
-	float frontplane_distance;
-	float viewplane_distance;
-	float frontplane_width;
-	float frontplane_height;
-	float sphereradius;
-	float *spherecenter;
-	float *spherecolor;
-
-	/* Surface Properties (For all surfaces in the scene)*/
-	float specular_coeff;
-	float specular_exp;
-	float diffuse_coeff;
-	float ambient_coeff;
-
-}config;
-
-
 /* Defines a tuple of RBG value
  * */
 typedef struct color_comp{
@@ -101,4 +70,43 @@ typedef struct Sphere{
 
 	float radius;
 }sphere;
+
+/* Struct that defines light properties */
+typedef struct struct_light{
+	vertex *position;	// Position of light
+	RGB_value *color;		// Color of light (RGB (0-1))
+	float *att_factor;	// Attenuation Factor 'aX' in 1/(a0 + a1*d + a2*d^2)
+}light;
+
+/* Struct for parsing information from config file*/
+typedef struct config_struct {
+
+	/* OpenGL window size variables*/
+	int window_width;
+	int window_height;
+
+	/* Scene Properties*/
+	float *eye_pos;
+	float *eye_up;
+	float *eye_side;
+	float *eye_normal;
+	float backplane_distance;
+	float frontplane_distance;
+	float viewplane_distance;
+	float frontplane_width;
+	float frontplane_height;
+	float sphereradius;
+	float *spherecenter;
+	float *spherecolor;
+
+	/* Surface Properties (For all surfaces in the scene)*/
+	float specular_coeff;
+	float specular_exp;
+	float diffuse_coeff;
+	float ambient_coeff;
+
+	/* Light source properties*/
+	light *light_source;
+
+}config;
 #endif /* STRUCTS_H_ */

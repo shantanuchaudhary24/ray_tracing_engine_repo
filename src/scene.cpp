@@ -12,7 +12,7 @@
 #include "../include/transformations.h"
 #include "../include/frustum.h"
 #include "../include/clipping.h"
-#include "../include/scene.h"
+//#include "../include/illumiantion.h"
 
 
 extern std::vector<polygon*> sceneData;
@@ -103,7 +103,7 @@ void init(config *ptr){
 	float d1=ptr->frontplane_distance;		//distance of front plane from eye
 	float d2=ptr->backplane_distance;		//distance of back plane from eye
 	float d3=ptr->viewplane_distance;		//distance of view plane from eye
-	float width=ptr->frontplane_width;	//width and height of front plane
+	float width=ptr->frontplane_width;		//width and height of front plane
 	float height=ptr->frontplane_height;
 	float midpointViewPlane[]={eye[0]+d3*eyenormal[0],eye[1]+d3*eyenormal[1],eye[2]+d3*eyenormal[2]};		//midpoint of view plane
 	float rdash[]={0,0,0};
@@ -112,12 +112,12 @@ void init(config *ptr){
 	sphere1->color= color_comp(ptr->spherecolor[0],ptr->spherecolor[1],ptr->spherecolor[2]);
 	sphere1->radius=ptr->sphereradius;
 
-		for(int j=0;j<3;j++)
-			rdash[0]+=-midpointViewPlane[j]*eyeside[j];
-		for(int j=0;j<3;j++)
-			rdash[1]+=-midpointViewPlane[j]*eyeup[j];
-		for(int j=0;j<3;j++)
-			rdash[2]+=-midpointViewPlane[j]*eyenormal[j];
+	for(int j=0;j<3;j++)
+		rdash[0]+=-midpointViewPlane[j]*eyeside[j];
+	for(int j=0;j<3;j++)
+		rdash[1]+=-midpointViewPlane[j]*eyeup[j];
+	for(int j=0;j<3;j++)
+		rdash[2]+=-midpointViewPlane[j]*eyenormal[j];
 
 	float Matrix[]={eyeside[0],eyeup[0],eyenormal[0],0,eyeside[1],eyeup[1],eyenormal[1],0,eyeside[2],eyeup[2],eyenormal[2],0,rdash[0],rdash[1],rdash[2],1};
 

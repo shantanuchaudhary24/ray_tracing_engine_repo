@@ -149,9 +149,27 @@ int main(int argc,char *argv[]){
 	outp->specular_exp = 0;
 	outp->ambient_coeff = 0;
 	outp->diffuse_coeff = 0;
+	outp->light_source = (light *)malloc(sizeof(light));
+	outp->light_source->position = (vertex *)malloc(sizeof(vertex));
+	outp->light_source->att_factor = (float *)malloc(3*sizeof(float));
+	outp->light_source->color = (RGB_value *)malloc(sizeof(RGB_value));
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
+
+//	cout<< outp->light_source->position->x_pos << std::endl;
+//	cout<< outp->light_source->position->y_pos << std::endl;
+//	cout<< outp->light_source->position->z_pos << std::endl;
+//
+//	cout<< outp->light_source->color->R_value << std::endl;
+//	cout<< outp->light_source->color->R_value<< std::endl;
+//	cout<< outp->light_source->color->R_value<< std::endl;
+//
+//	cout<< outp->light_source->att_factor[0] << std::endl;
+//	cout<< outp->light_source->att_factor[1] << std::endl;
+//	cout<< outp->light_source->att_factor[2] << std::endl;
+//
+//	exit(0);
 
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;

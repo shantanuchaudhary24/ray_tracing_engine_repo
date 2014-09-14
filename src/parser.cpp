@@ -41,7 +41,7 @@ float ConvertStringToShort(const std::string& str)
   return number;
 }
 
-/* This function takes an input string and separated the CSV of coordinates
+/* This function takes an input string and separates the CSV of coordinates
  * passed to it in the form of string and typecasts the individual coordinates
  * and stores them into the array passed to it.
  *
@@ -56,6 +56,60 @@ void config_coordinates(std::string str, float *array)
 		array[0] = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
 		array[1] = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-2));
 		array[2] = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes an input string and separates the CSV of coordinates
+ * passed to it in the form of string and typecasts the individual coordinates
+ * and stores them into the array passed to it.
+ *
+ * */
+void config_vertex(std::string str, vertex *pt)
+{
+	size_t found1 = str.find_first_of(",");
+	size_t found2 = str.find_last_of(",");
+
+	if(found1 != std::string::npos && found2 != std::string::npos)
+	{
+		pt->x_pos = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		pt->y_pos = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
+		pt->z_pos = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes an input string and separates the CSV of coordinates
+ * passed to it in the form of string and typecasts the individual coordinates
+ * and stores them into the array passed to it.
+ *
+ * */
+void config_color(std::string str, RGB_value *color)
+{
+	size_t found1 = str.find_first_of(",");
+	size_t found2 = str.find_last_of(",");
+
+	if(found1 != std::string::npos && found2 != std::string::npos)
+	{
+		color->R_value = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+		color->G_value = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
+		color->B_value = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+	}
+}
+
+/* This function takes input string and parses the CSV which
+ * express the properties of light.
+ * */
+void addLightSource(std::string str, light *src)
+{
+	size_t found11 = str.find_first_of("<");
+	size_t found12 = str.find_first_of(">");
+	size_t found21 = str.find_last_of("<");
+	size_t found22 = str.find_last_of(">");
+
+	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
+	{
+		config_vertex(str.substr(found11,found12 - found11),src->position);
+		config_color(str.substr(found12+3,found21 - found12-5),src->color);
+		config_coordinates(str.substr(found21,found22 - found21 -1),src->att_factor);
 	}
 }
 
@@ -137,6 +191,9 @@ void read_config(std::ifstream& in, config *out) {
 
 			if(firstWord == "AMBIENT_COEFF")
 				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+
+			if(firstWord == "LIGHT_SOURCE")
+				addLightSource(str, out->light_source);
 		}
 	}
 }
