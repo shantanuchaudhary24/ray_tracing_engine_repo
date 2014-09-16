@@ -7,6 +7,7 @@
 #include "../include/clipping.h"
 #include "../include/scene.h"
 #include "../include/parser.h"
+#include "../include/illumination.h"
 #include <fstream>
 using namespace std;
 
@@ -136,32 +137,38 @@ int main(int argc,char *argv[]){
 	/* Initialization of configuration structure and memory allocation*/
 	config *outp;
 	outp = (config *)malloc(sizeof(config));
-	outp->window_width = 0;
-	outp->window_height = 0;
 	outp->eye_pos = (float *)malloc(3*sizeof(float));
 	outp->eye_up = (float *)malloc(3*sizeof(float));
 	outp->eye_side = (float *)malloc(3*sizeof(float));
 	outp->eye_normal = (float *)malloc(3*sizeof(float));
+	outp->spherecenter = (float *)malloc(3*sizeof(float));
+	outp->spherecolor =(float *)malloc(3*sizeof(float));
+	outp->window_width = 0;
+	outp->window_height = 0;
 	outp->backplane_distance = 0;
 	outp->viewplane_distance = 0;
 	outp->frontplane_width = 0;
 	outp->frontplane_height = 0;
 	outp->backplane_distance = 0;
 	outp->sphereradius = 0;
-	outp->spherecenter = (float *)malloc(3*sizeof(float));
-	outp->spherecolor =(float *)malloc(3*sizeof(float));
 	outp->specular_coeff = 0;
 	outp->specular_exp = 0;
 	outp->ambient_coeff = 0;
 	outp->diffuse_coeff = 0;
-	outp->light_source = (light *)malloc(sizeof(light));
-	outp->light_source->position = (vertex *)malloc(sizeof(vertex));
-	outp->light_source->att_factor = (float *)malloc(3*sizeof(float));
-	outp->light_source->color = (RGB_value *)malloc(sizeof(RGB_value));
+	outp->num_lights = 0;
+
+//	cout << "Light sources: YOLO" << outp->num_lights << endl;
+//	outp->light_source = (light *)malloc(sizeof(light));
+//	outp->light_source->position = (vertex *)malloc(sizeof(vertex));
+//	outp->light_source->att_factor = (float *)malloc(3*sizeof(float));
+//	outp->light_source->color = (RGB_value *)malloc(sizeof(RGB_value));
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
 
+//	cout << "Light sources: " << outp->num_lights << endl;
+
+//	exit(0);
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;
 	screen_height = outp->window_height;
@@ -185,6 +192,13 @@ int main(int argc,char *argv[]){
 	glutMainLoop();
 
 	/* Free memory alloted to the configuration structure and its associated fields*/
+	free(outp->eye_pos);
+	free(outp->eye_up);
+	free(outp->eye_side);
+	free(outp->eye_normal);
+	free(outp->spherecenter);
+	free(outp->spherecolor);
+	free(outp->light_source);
 	free(outp);
     return 0;
 }

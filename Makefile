@@ -7,6 +7,7 @@ OBJECTS= obj/polygon.o obj/matrix.o obj/transformations.o obj/frustum.o obj/clip
 OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
+DIR=/home/shantanu/repositories/csl781_assignment2/
 
 all: create
 
@@ -15,6 +16,12 @@ create:
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
+gdb:
+	$(CXX) -g $(COMPILE) $(FILES)  $(LIBS)
+	mv *.o $(OBJDIR)
+	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+	gdb $(DIR)$(EXE)
+	
 run: create
 	./$(EXE)
 

@@ -26,11 +26,12 @@ sphere* sphere1;
 float* matInverse;
 float* matTranspose;
 float* mat;
-float diffuse_coeff;
-float spec_coeff;
-float amb_coeff;
-float spec_expo;
-light* lightInfo;
+//float diffuse_coeff;
+//float spec_coeff;
+//float amb_coeff;
+//float spec_expo;
+//light **lightInfo;	// Stores information of all the light sources in the scene.
+//int num_light_src;
 
 void create_scene(){
 	RGB_value color1 = color_comp(1.0f,0.0f,0.0f);
@@ -109,7 +110,7 @@ void DrawSphere(){
 
 }
 
-float* projection(Ray* ray)
+float* projection(Ray* ray, config* config_ptr)
 {
 	float* color=(float*)malloc(3*sizeof(float));
 	color[0]=color[0]=color[2]=0;
@@ -148,8 +149,7 @@ float* projection(Ray* ray)
 						normalpoint->z_pos=plane_eq[2];
 						//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
 
-						RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, face->face_color, lightInfo,
-																diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
+						RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, face->face_color, config_ptr);
 						color[0] = 255*final_color.R_value;
 						color[1] = 255*final_color.G_value;
 						color[2] = 255*final_color.B_value;
@@ -212,8 +212,7 @@ float* projection(Ray* ray)
 				//matrix_mult(normalpoint,matTranspose);
 				unitVector(normalpoint);
 
-				RGB_value final_color = total_reflection(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), lightInfo,
-														diffuse_coeff, spec_coeff, spec_expo,amb_coeff);
+				RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), config_ptr);
 
 				color[0] = 255*final_color.R_value;
 				color[1] = 255*final_color.G_value;
@@ -227,7 +226,7 @@ float* projection(Ray* ray)
 		return color;
 }
 
-float* sampling(float pixel[],int d2,float eye[]){
+float* sampling(float pixel[],int d2,float eye[], config* config_ptr){
 		vertex curRay=vertex(pixel[0],pixel[1],pixel[2]);
 		vertex backRay=vertex(curRay.x_pos+d2*(curRay.x_pos-eye[0]),
 							curRay.y_pos+d2*(curRay.y_pos-eye[1]),
@@ -236,10 +235,10 @@ float* sampling(float pixel[],int d2,float eye[]){
 		Ray* ray=(Ray*)malloc(sizeof(Ray));
 		ray->startPoint=&curRay;
 		ray->direction=unitVector(&curRay,&backRay);
-		float* color=projection(ray);
+		float* color=projection(ray,config_ptr);
 		return color;
 }
-float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float eyeup[],float width,float height,int N)
+float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float eyeup[],float width,float height,int N, config* config_ptr)
 {
 
 	float* pixelcolor=(float*)malloc(3*sizeof(float));
@@ -270,7 +269,7 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 			Ray* ray=(Ray*)malloc(sizeof(Ray));
 			ray->startPoint=curRay;
 			ray->direction=unitVector(curRay,backRay);
-			float* color=projection(ray);
+			float* color=projection(ray, config_ptr);
 			for(int k=0;k<3;k++)
 				pixelcolor[k]+=color[k];
 		}
@@ -298,11 +297,12 @@ void init(config *ptr){
 	sphere1->center=vertex(ptr->spherecenter[0],ptr->spherecenter[1],ptr->spherecenter[2]);
 	sphere1->color= color_comp(ptr->spherecolor[0],ptr->spherecolor[1],ptr->spherecolor[2]);
 	sphere1->radius=ptr->sphereradius;
-	diffuse_coeff=ptr->diffuse_coeff;
-	spec_coeff=ptr->specular_coeff;
-	amb_coeff=ptr->ambient_coeff;
-	spec_expo=ptr->specular_exp;
-	lightInfo=ptr->light_source;
+//	diffuse_coeff=ptr->diffuse_coeff;
+//	spec_coeff=ptr->specular_coeff;
+//	amb_coeff=ptr->ambient_coeff;
+//	spec_expo=ptr->specular_exp;
+//	lightInfo=ptr->light_source;
+//	num_light_src = ptr->num_lights;
 
 	for(int j=0;j<3;j++)
 		rdash[0]+=-midpointViewPlane[j]*eyeside[j];
@@ -383,7 +383,7 @@ void init(config *ptr){
 				pixel[k]=leftTopCoord[k]+(i*2*width*eyeside[k])/N-(j*2*height*eyeup[k])/N;
 			}
 
-			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N);
+			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
 			//float* pixelcolor=sampling(pixel,d2,eye);
 			for(int k=0;k<3;k++)
 				texture[i][j][k]=pixelcolor[k];
