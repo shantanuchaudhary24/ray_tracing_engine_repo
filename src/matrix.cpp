@@ -140,7 +140,7 @@ void transpose_matrix(float* mat,float* transpose){
 
 	for(int i=0;i<4;i++)
 			for(int j=0;j<4;j++)
-				mat[4*i+j]=mat[4*j+i];
+				transpose[4*i+j]=mat[4*j+i];
 }
 
 void matrix_mult(vertex* verts,const float* mat){

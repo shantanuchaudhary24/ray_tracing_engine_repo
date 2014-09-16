@@ -9,6 +9,7 @@
 #include <iostream>
 #include "../include/structs.h"
 #include "../include/macros.h"
+#include "../include/clipping.h"
 
 /* For debugging color values
  * */
@@ -30,49 +31,6 @@ void print_vertex(vertex *pt)
 	std::cout << pt->z_pos << std::endl;
 }
 
-/* Given an initial and final vertices, the following
- * function generates the vector pointing from initial
- * to final vertex.
- * init_vertex	: Pointer to initial vertex
- * final_vertex	: Pointer to final vertex
- * */
-vertex generate_vector(vertex* init_vertex, vertex* final_vertex)
-{
-
-	float normal_factor = sqrt(pow(final_vertex->x_pos - init_vertex->x_pos,2)+pow(final_vertex->y_pos - init_vertex->y_pos,2)+pow(final_vertex->z_pos - init_vertex->z_pos,2));
-	return vertex((final_vertex->x_pos - init_vertex->x_pos)/normal_factor,
-				(final_vertex->y_pos - init_vertex->y_pos)/normal_factor,
-				(final_vertex->z_pos - init_vertex->z_pos)/normal_factor);
-}
-
-/* Returns the dot product of two vectors
- * vector1	: Pointer to Input vector 1
- * vector2	: Pointer to Input vector 2
- * */
-float dot_product(vertex *vector1, vertex *vector2)
-{
-//	std::cout << "DOT_PRODUCT" << std::endl;
-//	print_vertex(vector1);
-//	print_vertex(vector2);
-	float result = vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos;
-//	if (result < 0)
-//		return result*(-1);
-//	else
-	return result;
-}
-
-/* Following function calculates the length of the vector between
- * two vertex in the 3D space.
- * pt1	: Pointer to initial pt. of vector
- * pt2	: Pointer to final pt. of vector
- * */
-float vector_length(vertex *pt1, vertex *pt2)
-{
-	float length = 0;
-	length = sqrt(pow((pt1->x_pos - pt2->x_pos),2)+pow((pt1->y_pos - pt2->y_pos),2)+pow((pt1->z_pos - pt2->z_pos),2));
-	return length;
-}
-
 /* Following function calculates the RGB vector obtained after diffuse
  * reflection. Standard optical physics has been followed.
  * normal_vector	: Pointer to Normal Vector at the point of incidence
@@ -84,18 +42,20 @@ float vector_length(vertex *pt1, vertex *pt2)
 RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_value *pt_color, light *light_src, float diff_coeff)
 {
 	RGB_value color_vector = RGB_value(0,0,0);
-	vertex light_vector = generate_vector(intersectionPt, light_src->position );
+	vertex* light_vector = unitVector(intersectionPt, light_src->position );
 	float distance_light = vector_length(light_src->position, intersectionPt);
-	float cos_theta = dot_product(&light_vector, normal_vector);
-	if(cos_theta>0){
+	float cos_theta = dot_product(light_vector, normal_vector);
 	float att_factor = (light_src->att_factor[0] + light_src->att_factor[1]*distance_light + light_src->att_factor[2]*distance_light*distance_light);
 	att_factor = 1/att_factor;
 	diff_coeff = diff_coeff/att_factor;
-	color_vector.R_value = diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
-	color_vector.G_value = diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
-	color_vector.B_value = diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
+	if(cos_theta>0)
+	{
+		color_vector.R_value = diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
+		color_vector.G_value = diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
+		color_vector.B_value = diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
 	}
-	else{
+	else
+	{
 		color_vector.R_value = 0;
 		color_vector.G_value = 0;
 		color_vector.B_value = 0;
@@ -157,16 +117,16 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, vertex *eye_position, RGB_value *pt_color, light* light_src, float specular_coeff, float spec_exp)
 {
 	RGB_value color_vector = RGB_value(0,0,0);
-	vertex eye_vector = generate_vector(intersectionPt, eye_position);
-	vertex light_vector = generate_vector(intersectionPt, light_src->position );
-	float cos_theta = dot_product(&light_vector, normal_vector);
+	vertex* eye_vector = unitVector(intersectionPt, eye_position);
+	vertex* light_vector = unitVector(intersectionPt, light_src->position );
+	float cos_theta = dot_product(light_vector, normal_vector);
 	if(cos_theta>0){
 	vertex temp_vector = vertex(2*cos_theta*normal_vector->x_pos, 2*cos_theta*normal_vector->y_pos, 2*cos_theta*normal_vector->z_pos);
-	vertex reflection_vector = generate_vector(&light_vector,&temp_vector);
-	float cos_alpha = dot_product(&reflection_vector, &eye_vector);
-	color_vector.R_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
-	color_vector.G_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
-	color_vector.B_value = pow(specular_coeff,spec_exp)*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
+	vertex* reflection_vector = unitVector(light_vector,&temp_vector);
+	float cos_alpha = dot_product(reflection_vector, eye_vector);
+	color_vector.R_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value);
+	color_vector.G_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value);
+	color_vector.B_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value);
 	}
 	else{
 		color_vector.R_value = 0;

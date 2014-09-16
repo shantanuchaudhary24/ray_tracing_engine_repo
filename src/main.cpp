@@ -19,6 +19,7 @@ float* viewingCordMatrix;
 float* inverseviewingCordMatrix;
 GLuint texName;
 std::vector<sphere*> spherearray;
+bool drawScene=false;
 /* For manipulating the rotation of objects
  * */
 float angle_x = 0;
@@ -102,24 +103,23 @@ void display(void){
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, texName);
 	face_info* face=clippingArea.get_face_set(1);
-	glRotatef(90,0,0,1);
 	glBegin(GL_QUADS);
 		glTexCoord2f(1,0); glVertex3f(face->vertex_set[0].x_pos,face->vertex_set[0].y_pos,face->vertex_set[0].z_pos);
 		glTexCoord2f(0,0); glVertex3f(face->vertex_set[1].x_pos,face->vertex_set[1].y_pos,face->vertex_set[1].z_pos);
 		glTexCoord2f(0,1); glVertex3f(face->vertex_set[2].x_pos,face->vertex_set[2].y_pos,face->vertex_set[2].z_pos);
 		glTexCoord2f(1,1); glVertex3f(face->vertex_set[3].x_pos,face->vertex_set[3].y_pos,face->vertex_set[3].z_pos);
 	glEnd();
-	glRotatef(-90,0,0,1);
 	glDisable(GL_TEXTURE_2D);
 
-	//clippingArea.draw();
-
-	/*for(int i=0;i<sceneData.size();i++)
-		sceneData.at(i)->draw();
-
-	glScalef(1.5,0.5,1);
-		DrawSphere();*/
-		//glScalef(0.5,1,1);
+	if(drawScene)
+	{
+		clippingArea.draw(false);
+		for(int i=0;i<sceneData.size();i++)
+			sceneData.at(i)->draw(true);
+		glScalef(2,1,1);
+			DrawSphere();
+		glScalef(0.5,1,1);
+	}
 
     glFlush();
 }

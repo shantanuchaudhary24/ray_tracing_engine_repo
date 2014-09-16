@@ -48,7 +48,7 @@ public:
 	int get_num_faces(void);
 	void add_face(int num_vertices, vertex* vertex_array, RGB_value* color);
 	void set_rot_center(float x, float y, float z);
-	void draw(void);
+	void draw(bool isFill);
 	void translate(float a,float b, float c);
 	void scale(float a,float b, float c);
 	void rotate(float x, float y, float z, float theta);
