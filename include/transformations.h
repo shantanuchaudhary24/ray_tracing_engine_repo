@@ -7,7 +7,7 @@
 
 #ifndef TRANSFORMATIONS_H_
 #define TRANSFORMATIONS_H_
-
+void transformation(const float* mat,polygon* poly);
 void perspective_transformation(float distFromViewingPlane);
 void perspective_projection(float distFromViewingPlane);
 void normalized_transformation(float width,float height,float near,float far,float distFromViewingPlane);

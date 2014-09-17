@@ -7,7 +7,7 @@ OBJECTS= obj/polygon.o obj/matrix.o obj/transformations.o obj/frustum.o obj/clip
 OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
-DIR=/home/shantanu/repositories/csl781_assignment2/
+DIR=/home/mukesh/Desktop/graphics_csl781/csl781_assignment2/
 
 all: run
 

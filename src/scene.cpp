@@ -33,10 +33,10 @@ float* mat;
 //light **lightInfo;	// Stores information of all the light sources in the scene.
 //int num_light_src;
 
-void create_scene(){
+void create_scene(float* eye){
 	RGB_value color1 = color_comp(1.0f,0.0f,0.0f);
 
-	float width=2,height=2,depth=1;
+	float width=0.68,height=0.68,depth=0.68;
 	vertex centre=vertex(0,0,3.5);
 		vertex face1[] = {
 							vertex(width,height,0),
@@ -80,32 +80,37 @@ void create_scene(){
 							vertex(-width,-height,0),
 						};
 		polygon* poly = (polygon*)malloc(sizeof(polygon));
-//		poly->add_face(4,face1,&color1);
+		poly->add_face(4,face1,&color2);
 		poly->add_face(4,face2,&color2);
-		poly->add_face(4,face3,&color3);
-		poly->add_face(4,face4,&color4);
-		poly->add_face(4,face5,&color5);
-		poly->add_face(4,face6,&color6);
+		poly->add_face(4,face3,&color2);
+		poly->add_face(4,face4,&color2);
+		poly->add_face(4,face5,&color2);
+		poly->add_face(4,face6,&color2);
+		myTranslatef(-eye[0],-eye[1],-eye[2],poly);
 		myTranslatef(centre.x_pos,centre.y_pos,centre.z_pos,poly);
+		myRotatef(-30,1,0,0,poly);
+		myRotatef(-30,0,1,0,poly);
 		sceneData.push_back(poly);
 
-	RGB_value color7 = color_comp(0.5f,0.5f,0.0f);
+
+	RGB_value color7 = color_comp(0.0f,0.0f,1.0f);
 		vertex face7[] = {
-							vertex(3.0f,3.0f,-2.5f),
-							vertex(-3.0f,-3.0f,-2.5f),
-							vertex(-3.0f,3.0f,-2.0f),
+							vertex(1.5f,1.5f,-4.5f),
+							vertex(-1.5f,-1.5f,-4.5f),
+							vertex(-1.5f,1.5f,-3.2f),
 						};
 
 		polygon* poly2 = (polygon*)malloc(sizeof(polygon));
 		poly2->add_face(3,face7,&color7);
-		//sceneData.push_back(poly2);
+		myTranslatef(-eye[0],-eye[1],-eye[2],poly2);
+		sceneData.push_back(poly2);
 }
 
 void DrawSphere(){
 
 	glColor3f(sphere1->color.R_value,sphere1->color.G_value,sphere1->color.B_value);
 	glTranslatef(sphere1->center.x_pos,sphere1->center.y_pos,sphere1->center.z_pos);
-	glutWireSphere(sphere1->radius,10,10);
+	glutWireSphere(sphere1->radius,100,100);
 	glTranslatef(-sphere1->center.x_pos,-sphere1->center.y_pos,-sphere1->center.z_pos);
 
 }
@@ -153,20 +158,16 @@ float* projection(Ray* ray, config* config_ptr)
 						color[0] = 255*final_color.R_value;
 						color[1] = 255*final_color.G_value;
 						color[2] = 255*final_color.B_value;
-					//	exit(0);
-
-//						color[0]=255*face->face_color->R_value;
-//						color[1]=255*face->face_color->G_value;
-//						color[2]=255*face->face_color->B_value;
 
 					}
 				}
+				//free(temp);
 			}
 		}
 
 
-		vertex* R0=ray->startPoint;
-		vertex* Rd=ray->direction;
+		vertex* R0=ray2->startPoint;
+		vertex* Rd=ray2->direction;
 		matrix_mult(R0,matInverse);
 		float B=2*(Rd->x_pos*(R0->x_pos-sphere1->center.x_pos)+Rd->y_pos*(R0->y_pos-sphere1->center.y_pos)+Rd->z_pos*(R0->z_pos-sphere1->center.z_pos));
 		float C= (R0->x_pos-sphere1->center.x_pos)*(R0->x_pos-sphere1->center.x_pos)+
@@ -200,7 +201,7 @@ float* projection(Ray* ray, config* config_ptr)
 			if(t!=0 && currdist<distancePlane)
 			{
 				distancePlane=currdist;
-				//matrix_mult(temp,matInverse);
+				matrix_mult(temp,matInverse);
 				//intersectionpoint=initialintersectionpoint*M;
 				intersectionPoint=temp;
 				//printf("intersectionPoint with sphere: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
@@ -209,7 +210,7 @@ float* projection(Ray* ray, config* config_ptr)
 				normalpoint->y_pos=(intersectionPoint->y_pos-sphere1->center.y_pos)/sphere1->radius;
 				normalpoint->z_pos=(intersectionPoint->z_pos-sphere1->center.z_pos)/sphere1->radius;
 				// normal= initialnormal*(Transpose(Inverse(M)))
-				//matrix_mult(normalpoint,matTranspose);
+				matrix_mult(normalpoint,matTranspose);
 				unitVector(normalpoint);
 
 				RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, &(sphere1->color), config_ptr);
@@ -218,11 +219,13 @@ float* projection(Ray* ray, config* config_ptr)
 				color[1] = 255*final_color.G_value;
 				color[2] = 255*final_color.B_value;
 
-//				color[0]=255*sphere1->color.R_value;
-//				color[1]=255*sphere1->color.G_value;
-//				color[2]=255*sphere1->color.B_value;
 			}
+			//free(temp);
 		}
+		//free(ray2);
+		//free(dirn);
+		//free(start);
+		//free(normalpoint);
 		return color;
 }
 
@@ -275,10 +278,24 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 		}
 	}
 
+	//free(curRay);
+	//free(backRay);
 	for(int k=0;k<3;k++)
 		pixelcolor[k]=pixelcolor[k]/(sampleSize*sampleSize);
 
 	return pixelcolor;
+}
+/*
+ * Shadow: find intersection between light and intersectPoint : if intersect then dont consider that light component
+ * instructions
+ * find intersection with objects
+ * if ray doesn't intersect with any object, check intersection with frustrum(treat frustrum as a close box)
+ * find reflection ray and refracted ray
+ * recursively call this function on both reflected and transmitted ray
+*/
+
+void recursive_ray_tracing(){
+
 }
 void init(config *ptr){
 
@@ -313,18 +330,12 @@ void init(config *ptr){
 
 	float Matrix[]={eyeside[0],eyeup[0],eyenormal[0],0,eyeside[1],eyeup[1],eyenormal[1],0,eyeside[2],eyeup[2],eyenormal[2],0,rdash[0],rdash[1],rdash[2],1};
 
-	viewingCordMatrix = (float*)malloc(16*sizeof(float));
-	for(int i=0;i<16;i++)
-		viewingCordMatrix[i]=Matrix[i];
-
+	viewingCordMatrix=(float*)malloc(16*sizeof(float));
+	memcpy(viewingCordMatrix,Matrix,16*sizeof(float));
 	inverseviewingCordMatrix=(float*)malloc(16*sizeof(float));
 	InverseMatrix(viewingCordMatrix,inverseviewingCordMatrix);
 
-	create_scene();
-	for(int i=0;i<sceneData.size();i++){
-		polygon* poly=sceneData.at(i);
-		myTranslatef(-eye[0],-eye[1],-eye[2],poly);
-	}
+	create_scene(&eye[0]);
 
 	sphere1->center.x_pos+=eye[0];
 	sphere1->center.y_pos+=eye[1];
@@ -370,7 +381,16 @@ void init(config *ptr){
 	int N=300;
 	float pixel[3];
 	GLubyte texture[N+1][N+1][4];
-	float mattemp[] = {1.5,0,0,0,0,0.5,0,0,0,0,1,0,0,0,0,1.0};
+
+	for(int i=0;i<N+1;i++)
+		for(int j=0;j<N+1;j++)
+		{
+			for(int k=0;k<3;k++)
+				texture[N+1][N+1][k]=0;
+			texture[N+1][N+1][4]=255;
+		}
+
+	float mattemp[] = {2,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1.0};
 	mat = mattemp;
 	matInverse=(float*)malloc(16*sizeof(float));
 	InverseMatrix(mat,matInverse);
@@ -380,17 +400,20 @@ void init(config *ptr){
 	for(int i=0;i<N+1;i++){
 		for(int j=0;j<N+1;j++){
 			for(int k=0;k<3;k++){
-				pixel[k]=leftTopCoord[k]+(i*2*width*eyeside[k])/N-(j*2*height*eyeup[k])/N;
+				pixel[k]=leftTopCoord[k]+(j*2*width*eyeside[k])/N-(i*2*height*eyeup[k])/N;
 			}
 
-			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
-			//float* pixelcolor=sampling(pixel,d2,eye);
+			//float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
+			float* pixelcolor=sampling(pixel,d2,eye,ptr);
 			for(int k=0;k<3;k++)
 				texture[i][j][k]=pixelcolor[k];
 			texture[i][j][3]=255;
-
+			//free(pixelcolor);
 		}
 	}
+
+	//free(matInverse);
+	//free(matTranspose);
 
 	glClearColor (0.0, 0.0, 0.0, 0.0);
 	glShadeModel(GL_FLAT);

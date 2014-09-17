@@ -34,8 +34,17 @@ float* plane_equation(face_info* face){
 	normalizePlane(eq);
 	return eq;
 }
+float vector_length(vertex *pt1, vertex *pt2)
+{
+	return sqrt(pow((pt1->x_pos - pt2->x_pos),2)+pow((pt1->y_pos - pt2->y_pos),2)+pow((pt1->z_pos - pt2->z_pos),2));
+}
 
-float dotproduct(vertex* p1,vertex* p2,vertex* p){
+float dot_product(vertex *vector1, vertex *vector2)
+{
+	return vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos;
+}
+
+float dot_product(vertex* p1,vertex* p2,vertex* p){
 	return (p2->x_pos-p1->x_pos)*(p->x_pos-p2->x_pos)+(p2->y_pos-p1->y_pos)*(p->y_pos-p2->y_pos)+(p2->z_pos-p1->z_pos)*(p->z_pos-p2->z_pos);
 }
 
@@ -52,18 +61,31 @@ float* normalizePlane(float* plane_eq){
 	return plane_eq;
 }
 
+void crossproduct(vertex* u,vertex* v,vertex* temp){
+
+	temp->x_pos=u->y_pos*v->z_pos-u->z_pos*v->y_pos;
+	temp->y_pos=u->z_pos*v->x_pos-u->x_pos*v->z_pos;
+	temp->z_pos=u->x_pos*v->y_pos-u->y_pos*v->x_pos;
+}
+
 bool isOnPlane(vertex* p, face_info* face){
 
+	vertex temp=vertex(0,0,0);
 	for(int i=0;i<face->number_of_vertices;i++){
 		vertex* p1 = &face->vertex_set[i];
 		vertex* p2 = &face->vertex_set[(i+1)%face->number_of_vertices];
 
-		float s1=dotproduct(p1,p2,p);
-		float s2=dotproduct(p,p1,p2);
-
-		//printf("i=%d s1=%f s2=%f\n",i,s1,s2);
-		if(s1*s2<0)
-			return false;
+		vertex* u=unitVector(p,p1);
+		vertex* v=unitVector(p,p2);
+		if(i==0)
+			crossproduct(u,v,&temp);
+		else
+		{
+			vertex temp2=vertex(0,0,0);
+			crossproduct(u,v,&temp2);
+			if(dot_product(&temp,&temp2)<0)
+				return false;
+		}
 	}
 	return true;
 }
