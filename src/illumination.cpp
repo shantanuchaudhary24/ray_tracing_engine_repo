@@ -166,9 +166,9 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, ver
 	vertex temp_vector = vertex(2*cos_theta*normal_vector->x_pos, 2*cos_theta*normal_vector->y_pos, 2*cos_theta*normal_vector->z_pos);
 	vertex reflection_vector = generate_vector(&light_vector,&temp_vector);
 	float cos_alpha = dot_product(&reflection_vector, &eye_vector);
-	color_vector.R_value = pow(cos_theta,spec_exp)*specular_coeff*(pt_color->R_value)*(light_src->color->R_value);
-	color_vector.G_value = pow(cos_theta,spec_exp)*specular_coeff*(pt_color->G_value)*(light_src->color->G_value);
-	color_vector.B_value = pow(cos_theta,spec_exp)*specular_coeff*(pt_color->B_value)*(light_src->color->B_value);
+	color_vector.R_value = pow(cos_alpha,spec_exp)*specular_coeff*(pt_color->R_value)*(light_src->color->R_value);
+	color_vector.G_value = pow(cos_alpha,spec_exp)*specular_coeff*(pt_color->G_value)*(light_src->color->G_value);
+	color_vector.B_value = pow(cos_alpha,spec_exp)*specular_coeff*(pt_color->B_value)*(light_src->color->B_value);
 	}
 	else{
 		color_vector.R_value = 0;

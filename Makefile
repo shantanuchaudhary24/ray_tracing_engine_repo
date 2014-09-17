@@ -9,7 +9,7 @@ LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 DIR=/home/shantanu/repositories/csl781_assignment2/
 
-all: create
+all: run
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
@@ -20,6 +20,8 @@ gdb:
 	$(CXX) -g $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+
+debug:	
 	gdb $(DIR)$(EXE)
 	
 run: create

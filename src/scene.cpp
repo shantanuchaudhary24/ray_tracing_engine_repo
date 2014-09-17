@@ -80,7 +80,7 @@ void create_scene(){
 							vertex(-width,-height,0),
 						};
 		polygon* poly = (polygon*)malloc(sizeof(polygon));
-		//poly->add_face(4,face1,&color1);
+//		poly->add_face(4,face1,&color1);
 		poly->add_face(4,face2,&color2);
 		poly->add_face(4,face3,&color3);
 		poly->add_face(4,face4,&color4);
