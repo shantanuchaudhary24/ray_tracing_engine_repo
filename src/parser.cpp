@@ -6,6 +6,7 @@
  */
 #include "../include/headers.h"
 #include "../include/structs.h"
+#include "../include/illumination.h"
 #include <iomanip>
 #include <exception>
 #include <fstream>
@@ -105,6 +106,11 @@ void addLightSource(std::string str, light *src)
 	size_t found21 = str.find_last_of("<");
 	size_t found22 = str.find_last_of(">");
 
+
+	src->position = (vertex *)malloc(sizeof(vertex));
+	src->color = (RGB_value *)malloc(sizeof(RGB_value));
+	src->att_factor = (float *)malloc(3*sizeof(float));
+
 	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
 	{
 		config_vertex(str.substr(found11,found12 - found11),src->position);
@@ -193,8 +199,23 @@ void read_config(std::ifstream& in, config *out) {
 			if(firstWord == "AMBIENT_COEFF")
 				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
+			if(firstWord == "NUM_LIGHT_SOURCES")
+			{
+				/* Initialize the light sources array by allotting memory*/
+				out->num_lights = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				out->current_index = 0;
+				out->light_source = (light **)malloc((out->num_lights)*sizeof(light *));
+			}
+
 			if(firstWord == "LIGHT_SOURCE")
-				addLightSource(str, out->light_source);
+			{
+				if(out->current_index < out->num_lights)
+				{
+					out->light_source[out->current_index] = (light *)malloc(sizeof(light));
+					addLightSource(str, out->light_source[out->current_index]);
+					out->current_index++;
+				}
+			}
 		}
 	}
 }

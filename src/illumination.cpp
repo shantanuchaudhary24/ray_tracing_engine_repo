@@ -11,7 +11,8 @@
 #include "../include/macros.h"
 #include "../include/clipping.h"
 
-/* For debugging color values
+
+/* For printing color values
  * */
 void print_color(RGB_value *color)
 {
@@ -21,7 +22,7 @@ void print_color(RGB_value *color)
 	std::cout << color->B_value << std::endl;
 }
 
-/* For debugging vertices
+/* For printing vertices
  * */
 void print_vertex(vertex *pt)
 {
@@ -29,6 +30,20 @@ void print_vertex(vertex *pt)
 	std::cout << pt->x_pos << " , ";
 	std::cout << pt->y_pos << " , ";
 	std::cout << pt->z_pos << std::endl;
+}
+
+/* For printing light source information
+ * */
+void print_light(light *src)
+{
+	std::cout << "Light Position Vector: " ;
+	print_vertex(src->position);
+	std::cout << "Light RGB Vector: " ;
+	print_color(src->color);
+	std::cout << "Light Attenuation Vector: " ;
+	std::cout << src->att_factor[0] << " , ";
+	std::cout << src->att_factor[1]<< " , ";
+	std::cout << src->att_factor[2]<< std::endl;
 }
 
 /* Following function calculates the RGB vector obtained after diffuse
@@ -73,19 +88,10 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 	std::cout << "Color Vector of Surface: " ;
 	print_color(pt_color);
 
-	std::cout << "Light Position Vector: " ;
-	print_vertex(light_src->position);
-
-	std::cout << "Light RGB Vector: " ;
-	print_color(light_src->color);
-
 	std::cout << "Distance of Light Source: " ;
 	std::cout << distance_light << std::endl;
 
-	std::cout << "Light Attenuation Vector: " ;
-	std::cout << light_src->att_factor[0] << " , ";
-	std::cout << light_src->att_factor[1]<< " , ";
-	std::cout << light_src->att_factor[2]<< std::endl;
+	print_light(light_src);
 
 	std::cout << "Calculated Attenuation Factor: " ;
 	std::cout << att_factor << std::endl;
@@ -200,11 +206,7 @@ RGB_value ambient_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 	std::cout << "Color Vector of Surface: " ;
 	print_color(pt_color);
 
-	std::cout << "Light Position Vector: " ;
-	print_vertex(light_src->position);
-
-	std::cout << "Light RGB Vector: " ;
-	print_color(light_src->color);
+	print_light(light_src);
 
 	std::cout << "Ambient Reflection Coefficient: ";
 	std::cout << ambi_coeff << std::endl;
@@ -219,21 +221,44 @@ RGB_value ambient_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 }
 
 /* Calculates the net color obtained after diffused, specular
- * and ambient reflection.
+ * and ambient reflection for a single light source.
  * */
-RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, vertex* ray_startPt, RGB_value *pt_color, light* light_src, float diff_coeff, float specular_coeff, float spec_exp, float ambi_coeff)
+RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, vertex* ray_startPt, RGB_value *pt_color , config* config_ptr, int index)
 {
-	RGB_value diff_color= diffuse_reflection(normal_vector,intersectionPt, pt_color, light_src,diff_coeff);
-	RGB_value spec_color= specular_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, light_src, specular_coeff, spec_exp);
-	RGB_value amb_color= ambient_reflection( normal_vector, intersectionPt, pt_color, light_src,ambi_coeff);
+	RGB_value final_color=color_comp(0,0,0);
+	RGB_value diff_color= diffuse_reflection(normal_vector,intersectionPt, pt_color, config_ptr->light_source[index],config_ptr->diffuse_coeff);
+	RGB_value spec_color= specular_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, config_ptr->light_source[index], config_ptr->specular_coeff, config_ptr->specular_exp);
+	RGB_value amb_color= ambient_reflection( normal_vector, intersectionPt, pt_color, config_ptr->light_source[index],config_ptr->ambient_coeff);
 
-	RGB_value final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
+	final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
 									diff_color.G_value+spec_color.G_value+amb_color.G_value,
 									diff_color.B_value+spec_color.B_value+amb_color.B_value);
-	final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.R_value=3*final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.G_value=3*final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.B_value=3*final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
 
 	return final_color;
 }
 
+/* Calculate the net color obtained for all the light sources
+ * in the scene.
+ * */
+RGB_value scene_illumination(vertex* normal_vector, vertex* intersectionPt, vertex* ray_startPt, RGB_value *pt_color, config* config_ptr)
+{
+	RGB_value final_color=color_comp(0,0,0);
+	RGB_value temp_color=color_comp(0,0,0);
+	int num_sources = config_ptr->num_lights;
+	for(int i=0; i<num_sources;i++)
+	{
+		temp_color = total_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, config_ptr, i);
+		final_color.R_value += temp_color.R_value;
+		final_color.G_value += temp_color.G_value;
+		final_color.B_value += temp_color.B_value;
+	}
+
+	final_color.R_value=3*final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.G_value=3*final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.B_value=3*final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+
+	return final_color;
+}

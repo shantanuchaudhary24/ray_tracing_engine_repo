@@ -44,7 +44,7 @@ float dot_product(vertex *vector1, vertex *vector2)
 	return vector1->x_pos*vector2->x_pos + vector1->y_pos*vector2->y_pos + vector1->z_pos*vector2->z_pos;
 }
 
-float dotproduct(vertex* p1,vertex* p2,vertex* p){
+float dot_product(vertex* p1,vertex* p2,vertex* p){
 	return (p2->x_pos-p1->x_pos)*(p->x_pos-p2->x_pos)+(p2->y_pos-p1->y_pos)*(p->y_pos-p2->y_pos)+(p2->z_pos-p1->z_pos)*(p->z_pos-p2->z_pos);
 }
 

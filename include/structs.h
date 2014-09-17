@@ -4,6 +4,7 @@
  *  Created on: Aug 26, 2014
  *      Author: shantanu
  */
+#include <vector>
 
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
@@ -115,7 +116,9 @@ typedef struct config_struct {
 	float ambient_coeff;
 
 	/* Light source properties*/
-	light *light_source;
+	int num_lights;
+	int current_index;
+	light **light_source;
 
 }config;
 
