@@ -9,6 +9,7 @@
 #define SCENE_H_
 
 void init(config *ptr);
-void DrawSphere();
+void DrawSphere(std::vector<sphere*> spheres);
+void DrawLight(std::vector<light*> lightSources);
 
 #endif /* SCENE_H_ */

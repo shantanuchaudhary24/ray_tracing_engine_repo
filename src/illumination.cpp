@@ -233,9 +233,9 @@ RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, vertex
 	final_color=color_comp(diff_color.R_value+spec_color.R_value+amb_color.R_value,
 									diff_color.G_value+spec_color.G_value+amb_color.G_value,
 									diff_color.B_value+spec_color.B_value+amb_color.B_value);
-	final_color.R_value=3*final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.G_value=3*final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.B_value=3*final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	//final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	//final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	//final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
 
 	return final_color;
 }
@@ -247,7 +247,7 @@ RGB_value scene_illumination(vertex* normal_vector, vertex* intersectionPt, vert
 {
 	RGB_value final_color=color_comp(0,0,0);
 	RGB_value temp_color=color_comp(0,0,0);
-	int num_sources = config_ptr->num_lights;
+	int num_sources = config_ptr->light_source.size();
 	for(int i=0; i<num_sources;i++)
 	{
 		temp_color = total_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, config_ptr, i);
@@ -256,9 +256,9 @@ RGB_value scene_illumination(vertex* normal_vector, vertex* intersectionPt, vert
 		final_color.B_value += temp_color.B_value;
 	}
 
-	final_color.R_value=3*final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.G_value=3*final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
-	final_color.B_value=3*final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.R_value=final_color.R_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.G_value=final_color.G_value/(final_color.R_value+final_color.G_value+final_color.B_value);
+	final_color.B_value=final_color.B_value/(final_color.R_value+final_color.G_value+final_color.B_value);
 
 	return final_color;
 }

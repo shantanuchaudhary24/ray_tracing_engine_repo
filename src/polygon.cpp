@@ -77,6 +77,11 @@
 		face_set.push_back(vector_obj);
 	}
 
+	void polygon::add_face(face_info* face){
+		num_of_faces++;
+		face_set.push_back(face);
+	}
+
 	/* Sets the center of mass/center of rotation of the composite body
 	 * */
 	void polygon::set_rot_center(float x, float y, float z)

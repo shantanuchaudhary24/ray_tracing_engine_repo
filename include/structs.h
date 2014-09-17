@@ -65,9 +65,9 @@ typedef struct info_face{
 
 typedef struct Sphere{
 
-	RGB_value color;
+	RGB_value* color;
 
-	vertex center;
+	vertex* center;
 
 	float radius;
 }sphere;
@@ -105,9 +105,6 @@ typedef struct config_struct {
 	float viewplane_distance;
 	float frontplane_width;
 	float frontplane_height;
-	float sphereradius;
-	float *spherecenter;
-	float *spherecolor;
 
 	/* Surface Properties (For all surfaces in the scene)*/
 	float specular_coeff;
@@ -116,9 +113,8 @@ typedef struct config_struct {
 	float ambient_coeff;
 
 	/* Light source properties*/
-	int num_lights;
-	int current_index;
-	light **light_source;
+	std::vector<light*> light_source;
+	std::vector<sphere*> sphere_array;
 
 }config;
 

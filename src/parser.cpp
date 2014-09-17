@@ -119,6 +119,25 @@ void addLightSource(std::string str, light *src)
 	}
 }
 
+void addSphere(std::string str, sphere *src)
+{
+	size_t found11 = str.find_first_of("<");
+	size_t found12 = str.find_first_of(">");
+	size_t found21 = str.find_last_of("<");
+	size_t found22 = str.find_last_of(">");
+
+
+	src->center = (vertex *)malloc(sizeof(vertex));
+	src->color = (RGB_value *)malloc(sizeof(RGB_value));
+
+	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
+	{
+		config_vertex(str.substr(found11,found12 - found11),src->center);
+		config_color(str.substr(found21,found22 - found21),src->color);
+		src->radius=ConvertStringToFloat(str.substr(found22+2));
+	}
+}
+
 void read_config(std::ifstream& in, config *out) {
 	/* Name of input file*/
 	in.open("config.cfg");
@@ -178,14 +197,11 @@ void read_config(std::ifstream& in, config *out) {
 			if(firstWord == "FRONTPLANE_HEIGHT")
 				out->frontplane_height = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
-			if(firstWord == "SPHERE_CENTER")
-				config_coordinates(str, out->spherecenter);
-
-			if(firstWord == "SPHERE_COLOR")
-				config_coordinates(str, out->spherecolor);
-
-			if(firstWord == "SPHERE_RADIUS")
-				out->sphereradius = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+			if(firstWord == "SPHERE"){
+				sphere* sp=(sphere*)malloc(sizeof(sphere));
+				addSphere(str,sp);
+				out->sphere_array.push_back(sp);
+			}
 
 			if(firstWord == "SPECULAR_EXP")
 				out->specular_exp = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
@@ -199,22 +215,11 @@ void read_config(std::ifstream& in, config *out) {
 			if(firstWord == "AMBIENT_COEFF")
 				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 
-			if(firstWord == "NUM_LIGHT_SOURCES")
-			{
-				/* Initialize the light sources array by allotting memory*/
-				out->num_lights = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
-				out->current_index = 0;
-				out->light_source = (light **)malloc((out->num_lights)*sizeof(light *));
-			}
-
 			if(firstWord == "LIGHT_SOURCE")
 			{
-				if(out->current_index < out->num_lights)
-				{
-					out->light_source[out->current_index] = (light *)malloc(sizeof(light));
-					addLightSource(str, out->light_source[out->current_index]);
-					out->current_index++;
-				}
+					light* source = (light *)malloc(sizeof(light));
+					addLightSource(str, source);
+					out->light_source.push_back(source);
 			}
 		}
 	}

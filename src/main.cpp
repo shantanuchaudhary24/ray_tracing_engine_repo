@@ -19,8 +19,9 @@ vector<float*> clipping_plane_eq;
 float* viewingCordMatrix;
 float* inverseviewingCordMatrix;
 GLuint texName;
-std::vector<sphere*> spherearray;
+config* parameters;
 bool drawScene=false;
+
 /* For manipulating the rotation of objects
  * */
 float angle_x = 0;
@@ -88,7 +89,7 @@ void reshape (int width, int height)
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void display(void){  
+void display(void){
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity(); 
@@ -117,9 +118,10 @@ void display(void){
 		clippingArea.draw(false);
 		for(int i=0;i<sceneData.size();i++)
 			sceneData.at(i)->draw(true);
-		glScalef(2,1,1);
-			DrawSphere();
-		glScalef(0.5,1,1);
+
+		DrawLight(parameters->light_source);
+		DrawSphere(parameters->sphere_array);
+
 	}
 
     glFlush();
@@ -141,8 +143,6 @@ int main(int argc,char *argv[]){
 	outp->eye_up = (float *)malloc(3*sizeof(float));
 	outp->eye_side = (float *)malloc(3*sizeof(float));
 	outp->eye_normal = (float *)malloc(3*sizeof(float));
-	outp->spherecenter = (float *)malloc(3*sizeof(float));
-	outp->spherecolor =(float *)malloc(3*sizeof(float));
 	outp->window_width = 0;
 	outp->window_height = 0;
 	outp->backplane_distance = 0;
@@ -150,25 +150,15 @@ int main(int argc,char *argv[]){
 	outp->frontplane_width = 0;
 	outp->frontplane_height = 0;
 	outp->backplane_distance = 0;
-	outp->sphereradius = 0;
 	outp->specular_coeff = 0;
 	outp->specular_exp = 0;
 	outp->ambient_coeff = 0;
 	outp->diffuse_coeff = 0;
-	outp->num_lights = 0;
-
-//	cout << "Light sources: YOLO" << outp->num_lights << endl;
-//	outp->light_source = (light *)malloc(sizeof(light));
-//	outp->light_source->position = (vertex *)malloc(sizeof(vertex));
-//	outp->light_source->att_factor = (float *)malloc(3*sizeof(float));
-//	outp->light_source->color = (RGB_value *)malloc(sizeof(RGB_value));
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
 
-//	cout << "Light sources: " << outp->num_lights << endl;
-
-//	exit(0);
+	parameters=outp;
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;
 	screen_height = outp->window_height;
@@ -196,9 +186,18 @@ int main(int argc,char *argv[]){
 	free(outp->eye_up);
 	free(outp->eye_side);
 	free(outp->eye_normal);
-	free(outp->spherecenter);
-	free(outp->spherecolor);
-	free(outp->light_source);
+	for(int i=0;i<outp->sphere_array.size();i++){
+		free(outp->sphere_array.at(i)->center);
+		free(outp->sphere_array.at(i)->color);
+		free(outp->sphere_array.at(i));
+	}
+	for(int i=0;i<outp->sphere_array.size();i++){
+		free(outp->light_source.at(i)->position);
+		free(outp->light_source.at(i)->color);
+		free(outp->light_source.at(i));
+	}
+	outp->light_source.clear();
+	outp->sphere_array.clear();
 	free(outp);
     return 0;
 }
