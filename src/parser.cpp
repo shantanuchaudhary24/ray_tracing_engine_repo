@@ -85,14 +85,20 @@ void config_vertex(std::string str, vertex *pt)
  * */
 void config_color(std::string str, RGB_value *color)
 {
-	size_t found1 = str.find_first_of(",");
-	size_t found2 = str.find_last_of(",");
 
-	if(found1 != std::string::npos && found2 != std::string::npos)
+	std::cout << str << std::endl;
+	size_t found1 = str.find_first_of("<");
+	size_t found2 = str.find_last_of(">");
+	size_t found3 = str.find_first_of(",");	// First "," in the string
+	size_t found4 = str.find_last_of(",");	// Last "," in the string
+	std::string mid_string = str.substr(found3+2, found4 - found3 - 2);
+
+	if(found3 != std::string::npos && found4 != std::string::npos )
 	{
-		color->R_value = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
-		color->G_value = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
-		color->B_value = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
+		color->R_value	= ConvertStringToFloat(str.substr(found1+2, found3-found1-2));
+		color->G_value	= ConvertStringToFloat(mid_string.substr(0,mid_string.find_first_of(",")));
+		color->B_value	= ConvertStringToFloat(mid_string.substr(mid_string.find_first_of(",") + 2, mid_string.length() - 1));
+		color->alpha	= ConvertStringToFloat(str.substr(found4 + 2, found2-found4-3));
 	}
 }
 
@@ -133,7 +139,7 @@ void addSphere(std::string str, sphere *src)
 	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
 	{
 		config_vertex(str.substr(found11,found12 - found11),src->center);
-		config_color(str.substr(found21,found22 - found21),src->color);
+		config_color(str.substr(found21,found22 - found21 + 1),src->color);
 		src->radius=ConvertStringToFloat(str.substr(found22+2));
 	}
 }

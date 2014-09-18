@@ -41,17 +41,27 @@ typedef struct color_comp{
 	float R_value;
 	float G_value;
 	float B_value;
+	float alpha;
 
 	color_comp(){
 			R_value = 1;
 			G_value = 1;
 			B_value = 1;
+			alpha	= 1;
 		}
 
 	color_comp(float R, float G, float B){
 		R_value = R;
 		G_value = G;
 		B_value = B;
+		alpha	= 1;
+	}
+
+	color_comp(float R, float G, float B, float A){
+		R_value = R;
+		G_value = G;
+		B_value = B;
+		alpha	= A;
 	}
 }RGB_value;
 

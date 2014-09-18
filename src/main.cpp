@@ -157,7 +157,7 @@ int main(int argc,char *argv[]){
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
-
+//	exit(0);
 	parameters=outp;
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;
