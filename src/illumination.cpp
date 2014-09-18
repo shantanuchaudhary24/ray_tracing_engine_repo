@@ -10,7 +10,7 @@
 #include "../include/structs.h"
 #include "../include/macros.h"
 #include "../include/clipping.h"
-
+#include "../include/vectors.h"
 
 /* For printing color values
  * */

@@ -138,6 +138,32 @@ void addSphere(std::string str, sphere *src)
 	}
 }
 
+/* Hash function for mapping strings to string_code
+ * */
+string_code hashit (std::string const& inString) {
+    if (inString == "WINDOW_WIDTH") return WINDOW_WIDTH;
+    if (inString == "WINDOW_HEIGHT") return WINDOW_HEIGHT;
+    if (inString == "EYE_POSITION") return EYE_POSITION;
+    if (inString == "EYE_UP") return EYE_UP;
+    if (inString == "EYE_SIDE") return EYE_SIDE;
+    if (inString == "EYE_NORMAL") return EYE_NORMAL;
+    if (inString == "FRONTPLANE_DISTANCE") return FRONTPLANE_DISTANCE;
+    if (inString == "BACKPLANE_DISTANCE") return BACKPLANE_DISTANCE;
+    if (inString == "VIEWPLANE_DISTANCE") return VIEWPLANE_DISTANCE;
+    if (inString == "FRONTPLANE_WIDTH") return FRONTPLANE_WIDTH;
+    if (inString == "FRONTPLANE_HEIGHT") return FRONTPLANE_HEIGHT;
+    if (inString == "SPHERE") return SPHERE;
+    if (inString == "SPECULAR_EXP") return SPECULAR_EXP;
+    if (inString == "SPECULAR_COEFF") return SPECULAR_COEFF;
+    if (inString == "DIFFUSE_COEFF") return DIFFUSE_COEFF;
+    if (inString == "AMBIENT_COEFF") return AMBIENT_COEFF;
+    if (inString == "LIGHT_SOURCE") return LIGHT_SOURCE;
+    return NULL_STR;
+}
+
+/* Function responsible for parsing and pushing data
+ * to various data structures.
+ * */
 void read_config(std::ifstream& in, config *out) {
 	/* Name of input file*/
 	in.open("config.cfg");
@@ -164,62 +190,82 @@ void read_config(std::ifstream& in, config *out) {
 				firstWord = str.erase(str.find_first_of(" "),str.find_first_not_of(" "));
 			}
 
-			if(firstWord == "WINDOW_WIDTH")
-				out->window_width = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+			switch(hashit(firstWord)){
 
-			if(firstWord == "WINDOW_HEIGHT")
-				out->window_height = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case WINDOW_WIDTH:
+					out->window_width = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "EYE_POSITION")
-				config_coordinates(str, out->eye_pos);
+				case WINDOW_HEIGHT:
+					out->window_height = ConvertStringToShort(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "EYE_UP")
-				config_coordinates(str, out->eye_up);
+				case EYE_POSITION:
+					config_coordinates(str, out->eye_pos);
+					break;
 
-			if(firstWord == "EYE_SIDE")
-				config_coordinates(str, out->eye_side);
+				case EYE_UP:
+					config_coordinates(str, out->eye_up);
+					break;
 
-			if(firstWord == "EYE_NORMAL")
-				config_coordinates(str, out->eye_normal);
+				case EYE_SIDE:
+					config_coordinates(str, out->eye_side);
+					break;
 
-			if(firstWord == "FRONTPLANE_DISTANCE")
-				out->frontplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case EYE_NORMAL:
+					config_coordinates(str, out->eye_normal);
+					break;
 
-			if(firstWord == "BACKPLANE_DISTANCE")
-				out->backplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case FRONTPLANE_DISTANCE:
+					out->frontplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "VIEWPLANE_DISTANCE")
-				out->viewplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case BACKPLANE_DISTANCE:
+					out->backplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "FRONTPLANE_WIDTH")
-				out->frontplane_width = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case VIEWPLANE_DISTANCE:
+					out->viewplane_distance = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "FRONTPLANE_HEIGHT")
-				out->frontplane_height = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case FRONTPLANE_WIDTH:
+					out->frontplane_width = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "SPHERE"){
-				sphere* sp=(sphere*)malloc(sizeof(sphere));
-				addSphere(str,sp);
-				out->sphere_array.push_back(sp);
-			}
+				case FRONTPLANE_HEIGHT:
+					out->frontplane_height= ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "SPECULAR_EXP")
-				out->specular_exp = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case SPHERE:
+				{
+					sphere* sp=(sphere*)malloc(sizeof(sphere));
+					addSphere(str,sp);
+					out->sphere_array.push_back(sp);
+					break;
+				}
+				case SPECULAR_EXP:
+					out->specular_exp = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "SPECULAR_COEFF")
-				out->specular_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case SPECULAR_COEFF:
+					out->specular_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "DIFFUSE_COEFF")
-				out->diffuse_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case DIFFUSE_COEFF:
+					out->diffuse_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "AMBIENT_COEFF")
-				out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+				case AMBIENT_COEFF:
+					out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 
-			if(firstWord == "LIGHT_SOURCE")
-			{
+				case LIGHT_SOURCE:
+				{
 					light* source = (light *)malloc(sizeof(light));
 					addLightSource(str, source);
 					out->light_source.push_back(source);
+					break;
+				}
 			}
 		}
 	}

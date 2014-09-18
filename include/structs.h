@@ -9,6 +9,32 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
+/* Enumeration for strings to be used in
+ * switch-case statements in the parser
+ * */
+enum string_code{
+	WINDOW_WIDTH,
+	WINDOW_HEIGHT,
+	EYE_POSITION,
+	EYE_UP,
+	EYE_SIDE,
+	EYE_NORMAL,
+	FRONTPLANE_DISTANCE,
+	BACKPLANE_DISTANCE,
+	VIEWPLANE_DISTANCE,
+	FRONTPLANE_WIDTH,
+	FRONTPLANE_HEIGHT,
+	SPHERE,
+	SPECULAR_EXP,
+	SPECULAR_COEFF,
+	DIFFUSE_COEFF,
+	AMBIENT_COEFF,
+	LIGHT_SOURCE,
+
+	/* NULL string in case none of the above */
+	NULL_STR
+};
+
 /* Defines a tuple of RBG value
  * */
 typedef struct color_comp{
