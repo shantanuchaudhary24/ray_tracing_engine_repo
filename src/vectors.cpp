@@ -120,7 +120,8 @@ vertex* findIntersection(float* eq_plane,Ray* ray){
 	vertex* point1=ray->startPoint;
 	float a= eq_plane[0]*unitvect->x_pos+eq_plane[1]*unitvect->y_pos+eq_plane[2]*unitvect->z_pos;
 	float b= eq_plane[0]*point1->x_pos+eq_plane[1]*point1->y_pos+eq_plane[2]*point1->z_pos+eq_plane[3];
-
+	if(a==0)
+		return NULL;
 	float t=-b/a;
 	if(t>0.000001)
 	{
