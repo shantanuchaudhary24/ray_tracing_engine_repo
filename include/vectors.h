@@ -8,6 +8,7 @@
 #ifndef VECTORS_H_
 #define VECTORS_H_
 
+float distancePoint(vertex* point1,vertex* point2);
 float* plane_equation(face_info* face);
 float vector_length(vertex *pt1, vertex *pt2);
 float dot_product(vertex *vector1, vertex *vector2);

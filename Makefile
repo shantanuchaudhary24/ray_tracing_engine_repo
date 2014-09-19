@@ -9,7 +9,7 @@ LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
 DIR=/home/mukesh/Desktop/graphics_csl781/csl781_assignment2/
 
-all: create
+all: gdb
 
 create:
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)

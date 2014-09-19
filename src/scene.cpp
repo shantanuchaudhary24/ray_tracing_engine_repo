@@ -13,6 +13,7 @@
 #include "../include/frustum.h"
 #include "../include/clipping.h"
 #include "../include/illumination.h"
+#include "../include/vectors.h"
 
 using namespace std;
 extern std::vector<polygon*> sceneData;
@@ -25,13 +26,13 @@ extern GLuint texName;
 float* matInverse;
 float* matTranspose;
 float* mat;
-bool isDistort=true;
+bool isDistort=false;
 
 void create_scene(float* eye){
 	RGB_value color1 = color_comp(1.0f,0.0f,0.0f);
 
-	float width=0.68,height=0.68,depth=0.68;
-	vertex centre=vertex(0,0,3.5);
+	float width=0.5,height=0.5,depth=0.5;
+	vertex centre=vertex(1,-0.4,3.0);
 		vertex face1[] = {
 							vertex(width,height,0),
 							vertex(-width,height,0),
@@ -136,11 +137,9 @@ void DrawSphere(vector<sphere*> array){
 	glScalef(0.5,1,1);
 }
 
-float intersection_with_plane(Ray* ray, config* config_ptr,float* color,vertex* intersectionPoint,bool onlyfirst){
+float intersection_with_plane(Ray* ray, config* config_ptr,RGB_value* color,vertex* normalpoint,vertex* intersectionPoint){
 
 	float distancePlane=100000;
-	float* frontPlane=clipping_plane_eq.at(0);
-	vertex* normalpoint=(vertex*)malloc(sizeof(vertex));
 
 	for(int m=0;m<sceneData.size();m++)
 	{
@@ -153,16 +152,9 @@ float intersection_with_plane(Ray* ray, config* config_ptr,float* color,vertex* 
 
 			if(temp!=NULL)
 			{
-				float currdist=distanceFromPlane(frontPlane,temp);
+				float currdist=distancePoint(ray->startPoint,temp);
 				if(isOnPlane(temp,face) && currdist<distancePlane)
 				{
-					if(onlyfirst)
-					{
-						free(temp);
-						free(normalpoint);
-						return -1;
-					}
-
 					distancePlane=currdist;
 					memcpy(intersectionPoint,temp,sizeof(vertex));
 					normalpoint->x_pos=plane_eq[0];
@@ -170,33 +162,22 @@ float intersection_with_plane(Ray* ray, config* config_ptr,float* color,vertex* 
 					normalpoint->z_pos=plane_eq[2];
 					//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
 
-					RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, face->face_color, config_ptr);
-					color[0] = 255*final_color.R_value;
-					color[1] = 255*final_color.G_value;
-					color[2] = 255*final_color.B_value;
-
+					memcpy(color,face->face_color,sizeof(RGB_value));
 				}
 			}
 			free(temp);
 		}
 	}
-	free(normalpoint);
 	return distancePlane;
 }
 
-float intersection_with_sphere(Ray* ray, config* config_ptr,float* color,vertex* intersectionPoint,float distancePlane,bool onlyfirst){
-
-	float* frontPlane=clipping_plane_eq.at(0);
-	vertex* normalpoint=(vertex*)malloc(sizeof(vertex));
+void intersection_with_sphere(Ray* ray, config* config_ptr,RGB_value* color,vertex* normalpoint,vertex* intersectionPoint,float distancePlane){
 
 	for(int i=0;i<config_ptr->sphere_array.size();i++)
 	{
 		sphere* sphere1=config_ptr->sphere_array.at(i);
 		vertex* R0=ray->startPoint;
 		vertex* Rd=ray->direction;
-
-		if(isDistort)
-			matrix_mult(R0,matInverse);
 
 		float B=2*(Rd->x_pos*(R0->x_pos-sphere1->center->x_pos)+Rd->y_pos*(R0->y_pos-sphere1->center->y_pos)+Rd->z_pos*(R0->z_pos-sphere1->center->z_pos));
 		float C= (R0->x_pos-sphere1->center->x_pos)*(R0->x_pos-sphere1->center->x_pos)+
@@ -222,88 +203,65 @@ float intersection_with_sphere(Ray* ray, config* config_ptr,float* color,vertex*
 					t=t0;
 			}
 
-			vertex* temp=(vertex*)malloc(sizeof(vertex));
-			temp->x_pos=R0->x_pos+Rd->x_pos*t;
-			temp->y_pos=R0->y_pos+Rd->y_pos*t;
-			temp->z_pos=R0->z_pos+Rd->z_pos*t;
-			float currdist=distanceFromPlane(frontPlane,temp);
-			if(t!=0 && currdist<distancePlane)
+			if(t!=0)
 			{
-
-				if(onlyfirst)
+				vertex* temp=(vertex*)malloc(sizeof(vertex));
+				temp->x_pos=R0->x_pos+Rd->x_pos*t;
+				temp->y_pos=R0->y_pos+Rd->y_pos*t;
+				temp->z_pos=R0->z_pos+Rd->z_pos*t;
+				float currdist=distancePoint(ray->startPoint,temp);
+				if(currdist<distancePlane)
 				{
-					free(temp);
-					free(normalpoint);
-					return -1;
+					distancePlane=currdist;
+					memcpy(intersectionPoint,temp,sizeof(vertex));
+					//printf("intersectionPoint with sphere: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
+
+					normalpoint->x_pos=(intersectionPoint->x_pos-sphere1->center->x_pos)/sphere1->radius;
+					normalpoint->y_pos=(intersectionPoint->y_pos-sphere1->center->y_pos)/sphere1->radius;
+					normalpoint->z_pos=(intersectionPoint->z_pos-sphere1->center->z_pos)/sphere1->radius;
+					// normal= initialnormal*(Transpose(Inverse(M)))
+					//intersectionpoint=initialintersectionpoint*M;
+					if(isDistort){
+						matrix_mult(intersectionPoint,mat);
+						matrix_mult(normalpoint,matTranspose);
+					}
+					unitVector(normalpoint);
+
+					memcpy(color,sphere1->color,sizeof(RGB_value));
 				}
-
-				distancePlane=currdist;
-				if(isDistort)
-				matrix_mult(temp,matInverse);
-				//intersectionpoint=initialintersectionpoint*M;
-				memcpy(intersectionPoint,temp,sizeof(vertex));
-				//printf("intersectionPoint with sphere: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
-
-				normalpoint->x_pos=(intersectionPoint->x_pos-sphere1->center->x_pos)/sphere1->radius;
-				normalpoint->y_pos=(intersectionPoint->y_pos-sphere1->center->y_pos)/sphere1->radius;
-				normalpoint->z_pos=(intersectionPoint->z_pos-sphere1->center->z_pos)/sphere1->radius;
-				// normal= initialnormal*(Transpose(Inverse(M)))
-				if(isDistort)
-				matrix_mult(normalpoint,matTranspose);
-				unitVector(normalpoint);
-
-				RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, sphere1->color, config_ptr);
-
-				color[0] = 255*final_color.R_value;
-				color[1] = 255*final_color.G_value;
-				color[2] = 255*final_color.B_value;
-
+				free(temp);
 			}
-			free(temp);
 		}
 	}
-	free(normalpoint);
-	return 1;
 }
-float* projection(Ray* ray, config* config_ptr)
+
+RGB_value* projection(Ray* ray, config* config_ptr)
 {
-	float* color=(float*)malloc(3*sizeof(float));
-	color[0]=color[1]=color[2]=0;
+	RGB_value* color=(RGB_value*)malloc(sizeof(RGB_value));
+	color->R_value=color->G_value=color->B_value=0;
 	vertex* intersectionPoint=(vertex*)malloc(sizeof(vertex));
-	float currentdist=intersection_with_plane(ray,config_ptr,color,intersectionPoint,false);
+	vertex* normalpoint=(vertex*)malloc(sizeof(vertex));
+
+	float currentdist=intersection_with_plane(ray,config_ptr,color,normalpoint,intersectionPoint);
 
 	if(isDistort){
 		matrix_mult(ray->direction,matInverse);
 		matrix_mult(ray->startPoint,matInverse);
 	}
+	intersection_with_sphere(ray,config_ptr,color,normalpoint,intersectionPoint,currentdist);
 
-	intersection_with_sphere(ray,config_ptr,color,intersectionPoint,currentdist,false);
-/*
-	float a=0;
-	for(int i=0;i<config_ptr->light_source.size();i++)
-	{
-		light* source=config_ptr->light_source.at(i);
-		ray->startPoint=intersectionPoint;
-		ray->direction=unitVector(intersectionPoint,source->position);
-		float a=intersection_with_plane(ray,config_ptr,color,intersectionPoint,true);
-		if(a==-1)
-			continue;
-		matrix_mult(ray->direction,matInverse);
-		matrix_mult(ray->startPoint,matInverse);
-		a=intersection_with_sphere(ray,config_ptr,color,intersectionPoint,10000,true);
-	}
+	RGB_value final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, color, config_ptr);
+	color->R_value = 255*final_color.R_value;
+	color->G_value = 255*final_color.G_value;
+	color->B_value = 255*final_color.B_value;
 
-	if(a==-1)
-	{
-		printf("shadow point");
-		print_vertex(intersectionPoint);
-		color[0]=color[1]=color[2]=0;
-	}*/
-
+	free(intersectionPoint);
+	free(normalpoint);
 	return color;
 }
 
 float* sampling(float pixel[],int d2,float eye[], config* config_ptr){
+
 		vertex curRay=vertex(pixel[0],pixel[1],pixel[2]);
 		vertex backRay=vertex(curRay.x_pos+d2*(curRay.x_pos-eye[0]),
 							curRay.y_pos+d2*(curRay.y_pos-eye[1]),
@@ -312,9 +270,13 @@ float* sampling(float pixel[],int d2,float eye[], config* config_ptr){
 		Ray* ray=(Ray*)malloc(sizeof(Ray));
 		ray->startPoint=&curRay;
 		ray->direction=unitVector(&curRay,&backRay);
-		float* color=projection(ray,config_ptr);
+		RGB_value* color=projection(ray,config_ptr);
+		float* pixelcolor=(float*)malloc(3*sizeof(float));
+		pixelcolor[0]=color->R_value;
+		pixelcolor[1]=color->G_value;
+		pixelcolor[2]=color->B_value;
 		free(ray);
-		return color;
+		return pixelcolor;
 }
 
 float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float eyeup[],float width,float height,int N, config* config_ptr)
@@ -324,7 +286,7 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 	pixelcolor[0]=pixelcolor[1]=pixelcolor[2]=0;
 	vertex* curRay=(vertex*)malloc(sizeof(vertex));
 	vertex* backRay=(vertex*)malloc(sizeof(vertex));
-	int sampleSize=3;
+	int sampleSize=2;
 	for(int m=0;m<sampleSize;m++){
 		for(int n=0;n<sampleSize;n++){
 
@@ -348,10 +310,13 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 			Ray* ray=(Ray*)malloc(sizeof(Ray));
 			ray->startPoint=curRay;
 			ray->direction=unitVector(curRay,backRay);
-			float* color=projection(ray, config_ptr);
-			for(int k=0;k<3;k++)
-				pixelcolor[k]+=color[k];
-			free(color);
+			RGB_value* color=projection(ray, config_ptr);
+			if(color!=NULL)
+			{
+				pixelcolor[0]+=color->R_value;
+				pixelcolor[1]+=color->G_value;
+				pixelcolor[2]+=color->B_value;
+			}
 			free(ray);
 		}
 	}
@@ -450,14 +415,17 @@ void init(config *ptr){
 	for(int i=0;i<3;i++)
 		leftTopCoord[i]=eye[i]+eyenormal[i]*d1+Sneg[i];
 
-	int N=250;
+	int N=300;
 	float pixel[3];
 	GLubyte texture[N+1][N+1][4];
 
-	float mattemp[] = {2,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1.0};
-	mat = mattemp;
+	float mattemp[] = {3,0,0,0,0,5,0,0,0,0,1,0,0,0,0,1.0};
+	mat=(float*)malloc(16*sizeof(float));
+	memcpy(mat,mattemp,16*sizeof(float));
+
 	matInverse=(float*)malloc(16*sizeof(float));
 	InverseMatrix(mat,matInverse);
+
 	matTranspose=(float*)malloc(16*sizeof(float));
 	transpose_matrix(matInverse,matTranspose);
 
@@ -467,10 +435,18 @@ void init(config *ptr){
 				pixel[k]=leftTopCoord[k]+(j*2*width*eyeside[k])/N-(i*2*height*eyeup[k])/N;
 			}
 
-			//float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
-			float* pixelcolor=sampling(pixel,d2,eye,ptr);
-			for(int k=0;k<3;k++)
+			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
+			//float* pixelcolor=sampling(pixel,d2,eye,ptr);
+			if(pixelcolor!=NULL)
+			{
+				for(int k=0;k<3;k++)
 				texture[i][j][k]=pixelcolor[k];
+			}
+			else
+			{
+				for(int k=0;k<3;k++)
+				texture[i][j][k]=0;
+			}
 			texture[i][j][3]=255;
 			free(pixelcolor);
 		}

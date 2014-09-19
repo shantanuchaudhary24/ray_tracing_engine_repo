@@ -86,7 +86,6 @@ void config_vertex(std::string str, vertex *pt)
 void config_color(std::string str, RGB_value *color)
 {
 
-	std::cout << str << std::endl;
 	size_t found1 = str.find_first_of("<");
 	size_t found2 = str.find_last_of(">");
 	size_t found3 = str.find_first_of(",");	// First "," in the string
