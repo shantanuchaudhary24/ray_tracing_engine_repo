@@ -7,12 +7,48 @@
 #include "../include/headers.h"
 #include "../include/structs.h"
 #include "../include/illumination.h"
+#include "../include/macros.h"
 #include <iomanip>
 #include <exception>
 #include <fstream>
 #include <algorithm>
 #include <sstream>
 #include <stdexcept>
+
+/* Prints the attributes of cube
+ * */
+void debug_cube(cube *sample)
+{
+	DEBUG();
+	DEBUG(<<<<<<< PRINTING CUBE PARAMETERS >>>>>>>>);
+	print_vertex(sample->center);
+	print_color(sample->color);
+	std::cout << "Width		: " << sample->width << std::endl;
+	std::cout << "Height		: " << sample->height<< std::endl;
+	std::cout << "Depth		: " << sample->depth << std::endl;
+	std::cout << "Ref Index	: " << sample->refractive_index<< std::endl;
+	std::cout << "Spec Coeff	: " << sample->specular_coeff << std::endl;
+	std::cout << "Spec Exp	: " << sample->specular_exp << std::endl;
+	std::cout << "Diffuse Coeff	: " << sample->diffuse_coeff << std::endl;
+	std::cout << "Ambi Coeff	: " << sample->ambient_coeff << std::endl;
+
+}
+/* Prints the attributes of sphere
+ * */
+void debug_sphere(sphere* sample)
+{
+	DEBUG();
+	DEBUG(<<<<<<< PRINTING SPHERE PARAMETERS >>>>>>>);
+	print_vertex(sample->center);
+	print_color(sample->color);
+	std::cout << "Radius		: " << sample->radius << std::endl;
+	std::cout << "Ref Index	: " << sample->refractive_index<< std::endl;
+	std::cout << "Spec Coeff	: " << sample->specular_coeff << std::endl;
+	std::cout << "Spec Exp	: " << sample->specular_exp << std::endl;
+	std::cout << "Diffuse Coeff	: " << sample->diffuse_coeff << std::endl;
+	std::cout << "Ambi Coeff	:" << sample->ambient_coeff << std::endl;
+
+}
 
 /* Typecasts a string into float*/
 float ConvertStringToFloat(const std::string& str)
@@ -52,12 +88,9 @@ void config_coordinates(std::string str, float *array)
 	size_t found1 = str.find_first_of(",");
 	size_t found2 = str.find_last_of(",");
 
-	if(found1 != std::string::npos && found2 != std::string::npos)
-	{
-		array[0] = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
-		array[1] = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-2));
-		array[2] = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
-	}
+	array[0] = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+	array[1] = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-2));
+	array[2] = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
 }
 
 /* This function takes an input string and separates the CSV of coordinates
@@ -70,12 +103,9 @@ void config_vertex(std::string str, vertex *pt)
 	size_t found1 = str.find_first_of(",");
 	size_t found2 = str.find_last_of(",");
 
-	if(found1 != std::string::npos && found2 != std::string::npos)
-	{
-		pt->x_pos = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
-		pt->y_pos = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
-		pt->z_pos = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
-	}
+	pt->x_pos = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,found1 - str.find_first_of(" ") -1));
+	pt->y_pos = ConvertStringToFloat(str.substr(found1 + 2, found2-found1-1));
+	pt->z_pos = ConvertStringToFloat(str.substr(found2 + 2, str.length()-found2 - 2));
 }
 
 /* This function takes an input string and separates the CSV of coordinates
@@ -92,13 +122,10 @@ void config_color(std::string str, RGB_value *color)
 	size_t found4 = str.find_last_of(",");	// Last "," in the string
 	std::string mid_string = str.substr(found3+2, found4 - found3 - 2);
 
-	if(found3 != std::string::npos && found4 != std::string::npos )
-	{
-		color->R_value	= ConvertStringToFloat(str.substr(found1+2, found3-found1-2));
-		color->G_value	= ConvertStringToFloat(mid_string.substr(0,mid_string.find_first_of(",")));
-		color->B_value	= ConvertStringToFloat(mid_string.substr(mid_string.find_first_of(",") + 2, mid_string.length() - 1));
-		color->alpha	= ConvertStringToFloat(str.substr(found4 + 2, found2-found4-3));
-	}
+	color->R_value	= ConvertStringToFloat(str.substr(found1+2, found3-found1-2));
+	color->G_value	= ConvertStringToFloat(mid_string.substr(0,mid_string.find_first_of(",")));
+	color->B_value	= ConvertStringToFloat(mid_string.substr(mid_string.find_first_of(",") + 2, mid_string.length() - 1));
+	color->alpha	= ConvertStringToFloat(str.substr(found4 + 2, found2-found4-3));
 }
 
 /* This function takes input string and parses the CSV which
@@ -115,13 +142,66 @@ void addLightSource(std::string str, light *src)
 	src->position = (vertex *)malloc(sizeof(vertex));
 	src->color = (RGB_value *)malloc(sizeof(RGB_value));
 	src->att_factor = (float *)malloc(3*sizeof(float));
+	config_vertex(str.substr(found11,found12 - found11),src->position);
+	config_color(str.substr(found12+3,found21 - found12-5),src->color);
+	config_coordinates(str.substr(found21,found22 - found21 -1),src->att_factor);
+}
 
-	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
-	{
-		config_vertex(str.substr(found11,found12 - found11),src->position);
-		config_color(str.substr(found12+3,found21 - found12-5),src->color);
-		config_coordinates(str.substr(found21,found22 - found21 -1),src->att_factor);
-	}
+/* Free Memory associated with light src*/
+void destroy_light(light *src)
+{
+	free(src->position);
+	free(src->color);
+	free(src);
+}
+
+void addCube(std::string str, cube *src)
+{
+	size_t found11 = str.find_first_of("<");
+	size_t found12 = str.find_first_of(">");
+	size_t found21 = str.find_last_of("<");
+	size_t found22 = str.find_last_of(">");
+	std::string prop_string = "";
+
+	src->center = (vertex *)malloc(sizeof(vertex));
+	src->color = (RGB_value *)malloc(sizeof(RGB_value));
+
+	config_vertex(str.substr(found11,found12 - found11),src->center);
+	config_color(str.substr(found21,found22 - found21 + 1),src->color);
+	prop_string = str.substr(found12+5,found21 -found12 - 9);
+
+	found11 = prop_string.find_first_of(",");
+	found12 = prop_string.find_last_of(",");
+	src->width 	= ConvertStringToFloat(prop_string.substr(0,found11));
+	src->height = ConvertStringToFloat(prop_string.substr(found11+2, found12 -found11-2));
+	src->depth 	= ConvertStringToFloat(prop_string.substr(found12+2, prop_string.length() - found12-2));
+
+	prop_string = str.substr(found21 + 2, found22 - found21 -2);
+	config_color(prop_string,src->color);
+
+	prop_string = str.substr(found22+3,str.length() - found22-3);
+	found11 = prop_string.find_first_of(",");
+	found12 = prop_string.find_last_of(",");
+	src->refractive_index 	= ConvertStringToFloat(prop_string.substr(0,found11));
+	src->ambient_coeff 	= ConvertStringToFloat(prop_string.substr(found12+2, prop_string.length() - found12-2));
+
+	prop_string = prop_string.substr(found11+2, found12 -found11-2);
+	found11 = prop_string.find_first_of(",");
+	found12 = prop_string.find_last_of(",");
+	src->specular_coeff = ConvertStringToFloat(prop_string.substr(0,found11));
+	src->specular_exp = ConvertStringToFloat(prop_string.substr(found11+2, found12 -found11-2));
+	src->diffuse_coeff	= ConvertStringToFloat(prop_string.substr(found12+2, prop_string.length() - found12-2));
+
+//	debug_cube(src);
+
+}
+
+/* Free Memory associated with cube*/
+void destroy_cube(cube* sample)
+{
+	free(sample->center);
+	free(sample->center);
+	free(sample);
 }
 
 void addSphere(std::string str, sphere *src)
@@ -130,17 +210,34 @@ void addSphere(std::string str, sphere *src)
 	size_t found12 = str.find_first_of(">");
 	size_t found21 = str.find_last_of("<");
 	size_t found22 = str.find_last_of(">");
-
+	std::string prop_string = "";
 
 	src->center = (vertex *)malloc(sizeof(vertex));
 	src->color = (RGB_value *)malloc(sizeof(RGB_value));
 
-	if(found11 != std::string::npos && found21 != std::string::npos && found12 != std::string::npos && found22 != std::string::npos)
-	{
-		config_vertex(str.substr(found11,found12 - found11),src->center);
-		config_color(str.substr(found21,found22 - found21 + 1),src->color);
-		src->radius=ConvertStringToFloat(str.substr(found22+2));
-	}
+	config_vertex(str.substr(found11,found12 - found11),src->center);
+	config_color(str.substr(found21,found22 - found21 + 1),src->color);
+
+	prop_string = str.substr(found22+3);
+	found11 = prop_string.find_first_of(",");
+	found12 = prop_string.find_last_of(",");
+
+	src->radius=ConvertStringToFloat(prop_string.substr(0,found11));
+	src->ambient_coeff = ConvertStringToFloat(prop_string.substr(found12+2,prop_string.length()-found12 -2));
+
+	prop_string = prop_string.substr(found11+2,found12-found11-2);
+	found11 = prop_string.find_first_of(",");
+	found12 = prop_string.find_last_of(",");
+
+	src->refractive_index=ConvertStringToFloat(prop_string.substr(0,found11));
+	src->diffuse_coeff = ConvertStringToFloat(prop_string.substr(found12+2,prop_string.length()-found12 -2));
+
+	prop_string = prop_string.substr(found11+2,found12-found11-2);
+	found11 = prop_string.find_first_of(",");
+
+	src->specular_coeff=ConvertStringToFloat(prop_string.substr(0,found11));
+	src->specular_exp = ConvertStringToFloat(prop_string.substr(found11+2,prop_string.length()-found11 -2));
+//	debug_sphere(src);
 }
 
 /* Hash function for mapping strings to string_code
@@ -158,6 +255,7 @@ string_code hashit (std::string const& inString) {
     if (inString == "FRONTPLANE_WIDTH") return FRONTPLANE_WIDTH;
     if (inString == "FRONTPLANE_HEIGHT") return FRONTPLANE_HEIGHT;
     if (inString == "SPHERE") return SPHERE;
+    if (inString == "CUBE") return CUBE;
     if (inString == "SPECULAR_EXP") return SPECULAR_EXP;
     if (inString == "SPECULAR_COEFF") return SPECULAR_COEFF;
     if (inString == "DIFFUSE_COEFF") return DIFFUSE_COEFF;
@@ -246,6 +344,13 @@ void read_config(std::ifstream& in, config *out) {
 					sphere* sp=(sphere*)malloc(sizeof(sphere));
 					addSphere(str,sp);
 					out->sphere_array.push_back(sp);
+					break;
+				}
+				case CUBE:
+				{
+					cube* cb=(cube *)malloc(sizeof(cube));
+					addCube(str,cb);
+					out->cube_array.push_back(cb);
 					break;
 				}
 				case SPECULAR_EXP:

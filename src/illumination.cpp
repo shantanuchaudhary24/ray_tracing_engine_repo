@@ -16,17 +16,18 @@
  * */
 void print_color(RGB_value *color)
 {
-	std::cout << "RGB Vector: ";
+	std::cout << "RGB Vector	: ";
 	std::cout << color->R_value << " , ";
 	std::cout << color->G_value << " , ";
-	std::cout << color->B_value << std::endl;
+	std::cout << color->B_value << " , ";
+	std::cout << color->alpha << std::endl;
 }
 
 /* For printing vertices
  * */
 void print_vertex(vertex *pt)
 {
-	std::cout << "Vertex Coordinates: ";
+	std::cout << "Vertex Vector	: ";
 	std::cout << pt->x_pos << " , ";
 	std::cout << pt->y_pos << " , ";
 	std::cout << pt->z_pos << std::endl;

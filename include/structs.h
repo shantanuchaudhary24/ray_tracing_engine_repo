@@ -25,6 +25,7 @@ enum string_code{
 	FRONTPLANE_WIDTH,
 	FRONTPLANE_HEIGHT,
 	SPHERE,
+	CUBE,
 	SPECULAR_EXP,
 	SPECULAR_COEFF,
 	DIFFUSE_COEFF,
@@ -106,8 +107,32 @@ typedef struct Sphere{
 	vertex* center;
 
 	float radius;
+
+	/* Surface Properties (For all surfaces in the scene)*/
+	float refractive_index;
+	float specular_coeff;
+	float specular_exp;
+	float diffuse_coeff;
+	float ambient_coeff;
+
 }sphere;
 
+typedef struct Cube{
+	RGB_value* color;
+
+	vertex* center;
+
+	float width;
+	float height;
+	float depth;
+
+	/* Surface Properties (For all surfaces in the scene)*/
+	float refractive_index;
+	float specular_coeff;
+	float specular_exp;
+	float diffuse_coeff;
+	float ambient_coeff;
+}cube;
 
 typedef struct Ray_{
 
@@ -151,6 +176,7 @@ typedef struct config_struct {
 	/* Light source properties*/
 	std::vector<light*> light_source;
 	std::vector<sphere*> sphere_array;
+	std::vector<cube*> cube_array;
 
 }config;
 

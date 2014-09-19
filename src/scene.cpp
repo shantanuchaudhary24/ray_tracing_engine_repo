@@ -28,46 +28,48 @@ float* matTranspose;
 float* mat;
 bool isDistort=false;
 
-void create_scene(float* eye){
-	RGB_value color1 = color_comp(1.0f,0.0f,0.0f);
+/* Function for creating a cube
+ * */
+polygon* create_cube(cube* src)
+{
+	float width=src->width;
+	float height=src->height;
+	float depth=src->depth;
+	RGB_value color = color_comp(src->color->R_value,src->color->G_value,src->color->B_value);
 
-	float width=0.5,height=0.5,depth=0.5;
-	vertex centre=vertex(1,-0.4,3.0);
+
 		vertex face1[] = {
 							vertex(width,height,0),
 							vertex(-width,height,0),
 							vertex(-width,-height,0),
 							vertex(width,-height,0),
 						};
-	RGB_value color2 = color_comp(1.0f,1.0f,0.0f);
+
 		vertex face2[] = {
 							vertex(width,height,-depth),
 							vertex(-width,height,-depth),
 							vertex(-width,-height,-depth),
 							vertex(width,-height,-depth),
 						};
-	RGB_value color3 = color_comp(1.0f,0.0f,1.0f);
+
 		vertex face3[] = {
 							vertex(width,height,0),
 							vertex(width,height,-depth),
 							vertex(width,-height,-depth),
 							vertex(width,-height,0),
 						};
-	RGB_value color4 = color_comp(0.0f,1.0f,1.0f);
 		vertex face4[] = {
 							vertex(width,height,0),
 							vertex(width,height,-depth),
 							vertex(-width,height,-depth),
 							vertex(-width,height,0),
 						};
-	RGB_value color5 = color_comp(0.0f,1.0f,0.5f);
 		vertex face5[] = {
 							vertex(-width,height,0),
 							vertex(-width,height,-depth),
 							vertex(-width,-height,-depth),
 							vertex(-width,-height,0),
 						};
-	RGB_value color6 = color_comp(1.0f,0.0f,0.5f);
 		vertex face6[] = {
 							vertex(width,-height,0),
 							vertex(width,-height,-depth),
@@ -75,20 +77,31 @@ void create_scene(float* eye){
 							vertex(-width,-height,0),
 						};
 		polygon* poly = (polygon*)malloc(sizeof(polygon));
-		poly->add_face(4,face1,&color2);
-		poly->add_face(4,face2,&color2);
-		poly->add_face(4,face3,&color2);
-		poly->add_face(4,face4,&color2);
-		poly->add_face(4,face5,&color2);
-		poly->add_face(4,face6,&color2);
-		myTranslatef(-eye[0],-eye[1],-eye[2],poly);
-		myTranslatef(centre.x_pos,centre.y_pos,centre.z_pos,poly);
-		myRotatef(-30,1,0,0,poly);
-		myRotatef(-30,0,1,0,poly);
-		sceneData.push_back(poly);
+		poly->add_face(4,face1,&color);
+		poly->add_face(4,face2,&color);
+		poly->add_face(4,face3,&color);
+		poly->add_face(4,face4,&color);
+		poly->add_face(4,face5,&color);
+		poly->add_face(4,face6,&color);
+		return poly;
 
+}
 
-	RGB_value color7 = color_comp(0.0f,0.0f,1.0f);
+void create_scene(float* eye, config* ptr ){
+
+		int i=0;
+		polygon *poly;
+		for(i=0;i<ptr->cube_array.size();i++)
+		{
+			poly = create_cube(ptr->cube_array.at(i) );
+			myTranslatef(-eye[0],-eye[1],-eye[2],poly);
+			myTranslatef(ptr->cube_array.at(i)->center->x_pos,ptr->cube_array.at(i)->center->y_pos,ptr->cube_array.at(i)->center->z_pos,poly);
+			myRotatef(-30,1,0,0,poly);
+			myRotatef(-30,0,1,0,poly);
+			sceneData.push_back(poly);
+		}
+
+		RGB_value color7 = color_comp(0.0f,0.0f,1.0f);
 		vertex face7[] = {
 							vertex(1.5f,1.5f,-4.5f),
 							vertex(-1.5f,-1.5f,-4.5f),
@@ -100,6 +113,7 @@ void create_scene(float* eye){
 		myTranslatef(-eye[0],-eye[1],-eye[2],poly2);
 		//sceneData.push_back(poly2);
 
+		RGB_value color3 = color_comp(1.0f,0.0f,1.0f);
 		vertex face8[] = {
 							vertex(2,-2,-3.5f),
 							vertex(2,-1,-5.5f),
@@ -113,7 +127,8 @@ void create_scene(float* eye){
 
 }
 
-void DrawLight(vector<light*> array){
+void DrawLight(vector<light*> array)
+{
 
 	glPointSize(5);
 	glBegin(GL_POINTS);
@@ -124,7 +139,8 @@ void DrawLight(vector<light*> array){
 	glEnd();
 }
 
-void DrawSphere(vector<sphere*> array){
+void DrawSphere(vector<sphere*> array)
+{
 
 	glScalef(2,1,1);
 	for(int i=0;i<array.size();i++){
@@ -286,7 +302,7 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 	pixelcolor[0]=pixelcolor[1]=pixelcolor[2]=0;
 	vertex* curRay=(vertex*)malloc(sizeof(vertex));
 	vertex* backRay=(vertex*)malloc(sizeof(vertex));
-	int sampleSize=2;
+	int sampleSize=3;
 	for(int m=0;m<sampleSize;m++){
 		for(int n=0;n<sampleSize;n++){
 
@@ -399,7 +415,7 @@ void init(config *ptr){
 				}
 			}*/
 
-	create_scene(&eye[0]);
+	create_scene(&eye[0], ptr);
 
 	for(int i=0;i<ptr->sphere_array.size();i++)
 	{

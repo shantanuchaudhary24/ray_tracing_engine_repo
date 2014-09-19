@@ -191,10 +191,11 @@ int main(int argc,char *argv[]){
 		free(outp->sphere_array.at(i)->color);
 		free(outp->sphere_array.at(i));
 	}
-	for(int i=0;i<outp->sphere_array.size();i++){
-		free(outp->light_source.at(i)->position);
-		free(outp->light_source.at(i)->color);
-		free(outp->light_source.at(i));
+	for(int i=0;i<outp->light_source.size();i++){
+		destroy_light(outp->light_source.at(i));
+	}
+	for(int i=0;i<outp->cube_array.size();i++){
+		destroy_cube(outp->cube_array.at(i));
 	}
 	outp->light_source.clear();
 	outp->sphere_array.clear();

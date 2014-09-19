@@ -27,6 +27,9 @@ debug:
 run: create
 	./$(EXE)
 
+cscope:
+	cscope -R -b
+
 clean:
 	rm -rf $(EXE)
 	rm -rf $(OBJECTS)
