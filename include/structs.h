@@ -31,6 +31,7 @@ enum string_code{
 	DIFFUSE_COEFF,
 	AMBIENT_COEFF,
 	LIGHT_SOURCE,
+	REFRACTIVE_INDEX,
 
 	/* NULL string in case none of the above */
 	NULL_STR
@@ -140,6 +141,10 @@ typedef struct Ray_{
 
 	vertex* startPoint;
 
+	float distance_travelled;	// Distance travelled by ray
+
+	float medium_ref_index; // Refractive index of the medium
+
 }Ray;
 
 /* Struct that defines light properties */
@@ -172,6 +177,7 @@ typedef struct config_struct {
 	float specular_exp;
 	float diffuse_coeff;
 	float ambient_coeff;
+	float refractive_index;
 
 	/* Light source properties*/
 	std::vector<light*> light_source;

@@ -28,31 +28,35 @@ private:
 	/* Flag to determine if the polygon has been drawn or not (DEBUGGING)*/
 	bool isDrawn;
 
+	/* Properties of polygon*/
+	float refractive_index;
+	float specular_coeff;
+	float specular_exp;
+	float diffuse_coeff;
+
 	/* Coordinates of center of rotation*/
 	float x_trans;
 	float y_trans;
 	float z_trans;
 
-	/* For storing current angle orientation. (DEBUGGING)*/
-	float theta_x;
-	float theta_y;
-	float theta_z;
-
-	/* Private function that translates the center of rotation*/
-	void translate_center(float a,float b, float c);
 
 public:
 	polygon(void);
-	polygon(float x, float y, float z, float l, float b, float h, int num_vertices, vertex* vertex_array, RGB_value* color);
+//	polygon(int num_vertices, vertex* vertex_array, RGB_value* color);
+	void set_refractive_index(float value);
+	void set_spec_coeff(float value);
+	void set_spec_exp(float value);
+	void set_diff_coeff(float value);
+	float get_refractive_index();
+	float get_spec_coeff();
+	float get_spec_exp();
+	float get_diff_coeff();
 	face_info * get_face_set(int i);
 	int get_num_faces(void);
 	void add_face(int num_vertices, vertex* vertex_array, RGB_value* color);
 	void add_face(face_info* face);
-	void set_rot_center(float x, float y, float z);
+//	void set_rot_center(float x, float y, float z);
 	void draw(bool isFill);
-	void translate(float a,float b, float c);
-	void scale(float a,float b, float c);
-	void rotate(float x, float y, float z, float theta);
 	void debug(void);
 };
 

@@ -14,6 +14,7 @@
 #include "../include/clipping.h"
 #include "../include/illumination.h"
 #include "../include/vectors.h"
+#include "../include/macros.h"
 
 using namespace std;
 extern std::vector<polygon*> sceneData;
@@ -26,7 +27,7 @@ extern GLuint texName;
 float* matInverse;
 float* matTranspose;
 float* mat;
-bool isDistort=false;
+bool isDistort=true;
 
 /* Function for creating a cube
  * */
@@ -77,6 +78,12 @@ polygon* create_cube(cube* src)
 							vertex(-width,-height,0),
 						};
 		polygon* poly = (polygon*)malloc(sizeof(polygon));
+
+		poly->set_diff_coeff(src->diffuse_coeff);
+		poly->set_refractive_index(src->refractive_index);
+		poly->set_spec_coeff(src->specular_coeff);
+		poly->set_spec_exp(src->specular_exp);
+
 		poly->add_face(4,face1,&color);
 		poly->add_face(4,face2,&color);
 		poly->add_face(4,face3,&color);
@@ -174,7 +181,7 @@ float intersection_with_plane(Ray* ray, config* config_ptr,RGB_value* color,vert
 
 			if(temp!=NULL)
 			{
-				float currdist=distancePoint(ray->startPoint,temp);
+				float currdist=vector_length(ray->startPoint,temp);
 				if(isOnPlane(temp,face) && currdist<distancePlane)
 				{
 					distancePlane=currdist;
@@ -185,6 +192,11 @@ float intersection_with_plane(Ray* ray, config* config_ptr,RGB_value* color,vert
 					//printf("intersectionPoint with plane: %f %f %f \n",intersectionPoint->x_pos,intersectionPoint->y_pos,intersectionPoint->z_pos);
 
 					memcpy(color,face->face_color,sizeof(RGB_value));
+//					*ref_index = poly->get_refractive_index();
+					config_ptr->refractive_index = poly->get_refractive_index();
+					config_ptr->diffuse_coeff = poly->get_diff_coeff();
+					config_ptr->specular_coeff =poly->get_spec_coeff();
+					config_ptr->specular_exp = poly->get_spec_exp();
 				}
 			}
 			free(temp);
@@ -231,7 +243,7 @@ float intersection_with_sphere(Ray* ray, config* config_ptr,RGB_value* color,ver
 				temp->x_pos=R0->x_pos+Rd->x_pos*t;
 				temp->y_pos=R0->y_pos+Rd->y_pos*t;
 				temp->z_pos=R0->z_pos+Rd->z_pos*t;
-				float currdist=distancePoint(ray->startPoint,temp);
+				float currdist=vector_length(ray->startPoint,temp);
 				if(currdist<distancePlane)
 				{
 					distancePlane=currdist;
@@ -250,6 +262,11 @@ float intersection_with_sphere(Ray* ray, config* config_ptr,RGB_value* color,ver
 					unitVector(normalpoint);
 
 					memcpy(color,sphere1->color,sizeof(RGB_value));
+//					*ref_index = sphere1->refractive_index;
+					config_ptr->refractive_index = sphere1->refractive_index;
+					config_ptr->diffuse_coeff = sphere1->diffuse_coeff;
+					config_ptr->specular_coeff =sphere1->specular_coeff;
+					config_ptr->specular_exp = sphere1->specular_exp;
 				}
 				free(temp);
 			}
@@ -322,9 +339,9 @@ bool isShadow(vertex* point,config* config_ptr){
 	return false;
 }
 
-Ray* reflectedRay(vertex* ray_start, vertex* intersectionPt, vertex* normal){
+Ray* reflectedRay(Ray* in_ray, vertex* intersectionPt, vertex* normal, float ref_index, float alpha){
 
-		vertex* incident_vector = unitVector(intersectionPt,ray_start);
+		vertex* incident_vector = unitVector(intersectionPt,in_ray->startPoint);
 		float cos_theta = dot_product(incident_vector, normal);
 		if(cos_theta>0)
 		{
@@ -335,16 +352,18 @@ Ray* reflectedRay(vertex* ray_start, vertex* intersectionPt, vertex* normal){
 			memcpy(start,intersectionPt,sizeof(vertex));
 			ray->startPoint=start;
 			ray->direction=reflection_vector;
+			ray->medium_ref_index = ref_index;
+			ray->distance_travelled = in_ray->distance_travelled/alpha;
 			return ray;
 		}
 		else
 			return NULL;
 }
 
-Ray* transmittedRay(vertex* ray_start, vertex* intersectionPt, vertex* normal)
+Ray* transmittedRay(Ray* in_ray, vertex* intersectionPt, vertex* normal, float* ref_index, float alpha)
 {
-	float refractiveIndex=1.5;
-	vertex* incident_vector = unitVector(intersectionPt,ray_start);
+	float refractiveIndex=(*ref_index)/in_ray->medium_ref_index;
+	vertex* incident_vector = unitVector(intersectionPt,in_ray->startPoint);
 	float cos_theta = dot_product(incident_vector, normal);
 	if(cos_theta>0)
 	{
@@ -360,6 +379,8 @@ Ray* transmittedRay(vertex* ray_start, vertex* intersectionPt, vertex* normal)
 		memcpy(start,intersectionPt,sizeof(vertex));
 		ray->startPoint=start;
 		ray->direction=transmitted_vector;
+		ray->medium_ref_index = *ref_index;
+		ray->distance_travelled = in_ray->distance_travelled/(1-alpha);
 		return ray;
 	}
 	else
@@ -373,7 +394,7 @@ RGB_value* projection(Ray* ray, config* config_ptr,int depth)
 	color->R_value=color->G_value=color->B_value=0;
 	vertex* intersectionPoint=(vertex*)malloc(sizeof(vertex));
 	vertex* normalpoint=(vertex*)malloc(sizeof(vertex));
-
+	float *ref_index = new float;
 	float currentdist=intersection_with_plane(ray,config_ptr,color,normalpoint,intersectionPoint);
 
 	if(isDistort){
@@ -403,40 +424,45 @@ RGB_value* projection(Ray* ray, config* config_ptr,int depth)
 		color->B_value = config_ptr->ambient_coeff*255*color->B_value;
 	}
 
-*/
+	 */
+	ray->distance_travelled += vector_length(intersectionPoint,ray->startPoint);
 
 	if(currentdist<1000)
 	{
-		RGB_value* final_color = scene_illumination(normalpoint,intersectionPoint, ray->startPoint, color, config_ptr);
+		RGB_value* final_color = scene_illumination(normalpoint,intersectionPoint, ray, color, config_ptr);
 
 		color->R_value = 255*final_color->R_value;
 		color->G_value = 255*final_color->G_value;
 		color->B_value = 255*final_color->B_value;
 
 
-		/*if(depth<4)
-		{
-
-			Ray* reflect_Ray = reflectedRay(ray->startPoint,intersectionPoint,normalpoint);
-
-			if(reflect_Ray!=NULL)
-			{
-				RGB_value* reflectedColor = projection(reflect_Ray,config_ptr,depth+1);
-				color->R_value += 255*reflectedColor->R_value;
-				color->G_value += 255*reflectedColor->G_value;
-				color->B_value += 255*reflectedColor->B_value;
-			}
-
-			Ray* transmit_Ray = transmittedRay(ray->startPoint,intersectionPoint,normalpoint);
-
-			if(transmit_Ray!=NULL)
-			{
-				RGB_value* transmitColor = projection(transmit_Ray,config_ptr,depth+1);
-				color->R_value += 255*transmitColor->R_value;
-				color->G_value += 255*transmitColor->G_value;
-				color->B_value += 255*transmitColor->B_value;
-			}
-		}*/
+//		if(depth<2)
+//		{
+//
+//			Ray* reflect_Ray = reflectedRay(ray, intersectionPoint,normalpoint, ray->medium_ref_index, color->alpha);
+//			if (color->alpha == 0)
+//			{
+//				DEBUG(ALpha is 0 MoFo);
+//				exit(0);
+//			}
+//			if(color->alpha != 0 && reflect_Ray!=NULL)
+//			{
+//				RGB_value* reflectedColor = projection(reflect_Ray,config_ptr,depth+1);
+//				color->R_value += 255*reflectedColor->R_value;
+//				color->G_value += 255*reflectedColor->G_value;
+//				color->B_value += 255*reflectedColor->B_value;
+//			}
+//
+//			Ray* transmit_Ray = transmittedRay(ray , intersectionPoint,normalpoint, ref_index, color->alpha);
+//
+//			if(color->alpha != 1 && transmit_Ray!=NULL)
+//			{
+//				RGB_value* transmitColor = projection(transmit_Ray,config_ptr,depth+1);
+//				color->R_value += 255*transmitColor->R_value;
+//				color->G_value += 255*transmitColor->G_value;
+//				color->B_value += 255*transmitColor->B_value;
+//			}
+//		}
 	}
 
 	free(intersectionPoint);
@@ -494,6 +520,8 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 			Ray* ray=(Ray*)malloc(sizeof(Ray));
 			ray->startPoint=curRay;
 			ray->direction=unitVector(curRay,backRay);
+			ray->medium_ref_index = 1;	// Medium is air so index is 1
+			ray->distance_travelled = 0;
 			RGB_value* color=projection(ray, config_ptr,1);
 			if(color!=NULL)
 			{
@@ -510,6 +538,9 @@ float* supersampling(float pixel[], int d2, float eye[],float eyeside[],float ey
 	for(int k=0;k<3;k++)
 		pixelcolor[k]=pixelcolor[k]/(sampleSize*sampleSize);
 
+	pixelcolor[0]=pixelcolor[0]>255?255:pixelcolor[0];
+	pixelcolor[1]=pixelcolor[1]>255?255:pixelcolor[1];
+	pixelcolor[2]=pixelcolor[2]>255?255:pixelcolor[2];
 	return pixelcolor;
 }
 /*
@@ -599,7 +630,8 @@ void init(config *ptr){
 	for(int i=0;i<3;i++)
 		leftTopCoord[i]=eye[i]+eyenormal[i]*d1+Sneg[i];
 
-	int N=250;
+	/* Level of Sampling via number of pixels*/
+	int N=750;
 	float pixel[3];
 	GLubyte texture[N+1][N+1][4];
 
@@ -620,7 +652,7 @@ void init(config *ptr){
 			}
 
 			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
-			//float* pixelcolor=sampling(pixel,d2,eye,ptr);
+//			float* pixelcolor=sampling(pixel,d2,eye,ptr);
 			if(pixelcolor!=NULL)
 			{
 				for(int k=0;k<3;k++)

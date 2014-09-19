@@ -261,6 +261,7 @@ string_code hashit (std::string const& inString) {
     if (inString == "DIFFUSE_COEFF") return DIFFUSE_COEFF;
     if (inString == "AMBIENT_COEFF") return AMBIENT_COEFF;
     if (inString == "LIGHT_SOURCE") return LIGHT_SOURCE;
+    if (inString == "REFRACTIVE_INDEX") return REFRACTIVE_INDEX;
     return NULL_STR;
 }
 
@@ -369,6 +370,9 @@ void read_config(std::ifstream& in, config *out) {
 					out->ambient_coeff = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
 					break;
 
+				case REFRACTIVE_INDEX:
+					out->refractive_index = ConvertStringToFloat(str.substr(str.find_first_of(" ")+1,str.length()-str.find_first_of(" ")-1));
+					break;
 				case LIGHT_SOURCE:
 				{
 					light* source = (light *)malloc(sizeof(light));

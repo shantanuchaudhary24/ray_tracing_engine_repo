@@ -14,37 +14,74 @@
 	* */
 	polygon::polygon(void)
 	{
-		num_of_faces = 0;
-		isDrawn = false;
-		x_trans = 0;
-		y_trans = 0;
-		z_trans = 0;
-		theta_x = 0;
-		theta_y = 0;
-		theta_z = 0;
+		this->num_of_faces 		= 0;
+		this->isDrawn 			= false;
+		this->refractive_index	= 1;
+		this->specular_coeff	= 1;
+		this->specular_exp		= 1;
+		this->diffuse_coeff		= 1;
+		this->x_trans			= 0;
+		this->y_trans			= 0;
+		this->z_trans			= 0;
+
 
 	}
 
-	/* Secondary constructor for class
-	 * */
-	polygon::polygon(float x, float y, float z, float cx, float cy, float cz, int num_vertices, vertex* vertex_array, RGB_value* color)
+//	/* Secondary constructor for class
+//	 * */
+//	polygon::polygon( int num_vertices, vertex* vertex_array, RGB_value* color)
+//	{
+//		num_of_faces = 1;
+//		isDrawn = false;
+//		num_of_faces++;
+//		face_info* vector_obj = (face_info*)malloc(sizeof(face_info));
+//		vector_obj->face_color=(RGB_value *)malloc(sizeof(RGB_value));
+//		vector_obj->vertex_set=(vertex *)malloc(num_vertices*sizeof(vertex));
+//		vector_obj->number_of_vertices =num_vertices;
+//		memcpy(vector_obj->face_color, color,sizeof(RGB_value));
+//		memcpy(vector_obj->vertex_set, vertex_array, num_vertices*sizeof(vertex));
+//		face_set.push_back(vector_obj);
+//	}
+
+
+	void polygon::set_refractive_index(float value)
 	{
-		num_of_faces = 1;
-		isDrawn = false;
-		x_trans = x;
-		y_trans = y;
-		z_trans = z;
-		theta_x = 0;
-		theta_y = 0;
-		theta_z = 0;
-		num_of_faces++;
-		face_info* vector_obj = (face_info*)malloc(sizeof(face_info));
-		vector_obj->face_color=(RGB_value *)malloc(sizeof(RGB_value));
-		vector_obj->vertex_set=(vertex *)malloc(num_vertices*sizeof(vertex));
-		vector_obj->number_of_vertices =num_vertices;
-		memcpy(vector_obj->face_color, color,sizeof(RGB_value));
-		memcpy(vector_obj->vertex_set, vertex_array, num_vertices*sizeof(vertex));
-		face_set.push_back(vector_obj);
+		this->refractive_index = value;
+	}
+
+	void polygon::set_spec_coeff(float value)
+	{
+		this->specular_coeff = value;
+	}
+
+	void polygon::set_spec_exp(float value)
+	{
+		this->specular_exp = value;
+	}
+
+	void polygon::set_diff_coeff(float value)
+	{
+		this->diffuse_coeff = value;
+	}
+
+	float polygon::get_refractive_index()
+	{
+		return this->refractive_index;
+	}
+
+	float polygon::get_spec_coeff()
+	{
+		return this->specular_coeff;
+	}
+
+	float polygon::get_spec_exp()
+	{
+		return this->specular_exp;
+	}
+
+	float polygon::get_diff_coeff()
+	{
+		return this->diffuse_coeff;
 	}
 
 	/* Returns the set of vertices corresponding to face
@@ -77,20 +114,6 @@
 		face_set.push_back(vector_obj);
 	}
 
-	void polygon::add_face(face_info* face){
-		num_of_faces++;
-		face_set.push_back(face);
-	}
-
-	/* Sets the center of mass/center of rotation of the composite body
-	 * */
-	void polygon::set_rot_center(float x, float y, float z)
-	{
-		x_trans = x;
-		y_trans = y;
-		z_trans = z;
-	}
-
 	/* Draws the corresponding polygon face using OpenGL
 	 * */
 	void polygon::draw(bool isFill)
@@ -112,69 +135,6 @@
 			glEnd();
 		}
 	}
-
-	/* Shift the object by specified units
-	 * a : in X direction
-	 * b : in Y direction
-	 * c : in Z direction
-	 * */
-	/*void polygon::translate(float a,float b, float c)
-	{
-		int i,j;
-
-		 Shift the center of rotation/center of mass
-		x_trans += a;
-		y_trans += b;
-		z_trans += c;
-		for (i=0;i<face_set.size();i++)
-			for(j=0;j<face_set[i]->number_of_vertices;j++)
-				face_set[i]->vertex_set[j] = translate_transform(face_set[i]->vertex_set[j], a, b, c);
-	}*/
-
-	/* Scale the object by specified units
-	 * a : in X direction
-	 * b : in Y direction
-	 * c : in Z direction
-	 * */
-	/*void polygon::scale(float a,float b, float c)
-	{
-		int i,j;
-
-		Ensure that the scaling factors are not zero. If they are then change their value to 1
-		a = (a==0)?1:a;
-		b = (b==0)?1:b;
-		c = (c==0)?1:c;
-
-		for (i=0;i<face_set.size();i++)
-			for(j=0;j<face_set[i]->number_of_vertices;j++)
-				face_set[i]->vertex_set[j] = scale_transform(face_set[i]->vertex_set[j], a, b, c);
-	}*/
-
-	/* For translation of center of rotation/center of mass*/
-	/*void polygon::translate_center(float a,float b, float c)
-	{
-		int i,j;
-		for (i=0;i<face_set.size();i++)
-			for(j=0;j<face_set[i]->number_of_vertices;j++)
-				face_set[i]->vertex_set[j] = translate_transform(face_set[i]->vertex_set[j], a, b, c);
-	}
-*/
-	/* For rotating the object
-	 * a: with respect to X
-	 * b: with respect to Y
-	 * c: with respect to Z
-	 * theta: angle by which the object needs to be rotated
-	 * */
-	/*void polygon::rotate(float a, float b, float c, float theta)
-	{
-		int i,j;
-		vertex center = vertex(0,0,0);
-		translate_center(-x_trans,-y_trans,-z_trans);
-			for (i=0;i<face_set.size();i++)
-				for(j=0;j<face_set[i]->number_of_vertices;j++)
-					face_set[i]->vertex_set[j] = rotate_transform(face_set[i]->vertex_set[j], a, b, c, theta);
-		translate_center(x_trans,y_trans,z_trans);
-	}*/
 
 	/* For debugging info about the class object
 	 * Prints info about all faces and the vertices constituting that face.

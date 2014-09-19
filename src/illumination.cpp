@@ -56,7 +56,7 @@ void print_light(light *src)
  * light_src		: Pointer to data structure of light source
  * diff_coeff		: Surface diffuse reflection coefficient
  * */
-RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_value *pt_color, light *light_src, float diff_coeff)
+RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, float distance_travelled, RGB_value *pt_color, light *light_src, float diff_coeff)
 {
 	RGB_value color_vector = RGB_value(0,0,0);
 	vertex* light_vector = unitVector(intersectionPt, light_src->position );
@@ -67,9 +67,9 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
 	diff_coeff = diff_coeff/att_factor;
 	if(cos_theta>0)
 	{
-		color_vector.R_value = diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value);
-		color_vector.G_value = diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value);
-		color_vector.B_value = diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value);
+		color_vector.R_value = (diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
+		color_vector.G_value = (diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
+		color_vector.B_value = (diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
 	}
 	else
 	{
@@ -122,19 +122,20 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, RGB_
  * spec_coeff		: Surface specular reflection coefficient
  * spec_exp			: Specular reflection coefficient
  * */
-RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, vertex *eye_position, RGB_value *pt_color, light* light_src, float specular_coeff, float spec_exp)
+RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, Ray* ray, RGB_value *pt_color, light* light_src, float specular_coeff, float spec_exp)
 {
 	RGB_value color_vector = RGB_value(0,0,0);
-	vertex* eye_vector = unitVector(intersectionPt, eye_position);
+	vertex* ray_point = unitVector(intersectionPt, ray->startPoint);
 	vertex* light_vector = unitVector(intersectionPt, light_src->position );
 	float cos_theta = dot_product(light_vector, normal_vector);
 	if(cos_theta>0){
 	vertex temp_vector = vertex(2*cos_theta*normal_vector->x_pos, 2*cos_theta*normal_vector->y_pos, 2*cos_theta*normal_vector->z_pos);
 	vertex* reflection_vector = unitVector(light_vector,&temp_vector);
-	float cos_alpha = dot_product(reflection_vector, eye_vector);
-	color_vector.R_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value);
-	color_vector.G_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value);
-	color_vector.B_value = specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value);
+	float cos_alpha = dot_product(reflection_vector, ray_point);
+	float distance_travelled = ray->distance_travelled;
+	color_vector.R_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
+	color_vector.G_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
+	color_vector.B_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
 	}
 	else{
 		color_vector.R_value = 0;
@@ -198,11 +199,11 @@ void ambient_reflection(RGB_value *pt_color, float ambi_coeff)
 /* Calculates the net color obtained after diffused, specular
  * and ambient reflection for a single light source.
  * */
-RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, vertex* ray_startPt, RGB_value *pt_color , config* config_ptr, int index)
+RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, Ray* ray, RGB_value *pt_color , config* config_ptr, int index)
 {
 	RGB_value final_color=color_comp(0,0,0);
-	RGB_value diff_color= diffuse_reflection(normal_vector,intersectionPt, pt_color, config_ptr->light_source[index],config_ptr->diffuse_coeff);
-	RGB_value spec_color= specular_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, config_ptr->light_source[index], config_ptr->specular_coeff, config_ptr->specular_exp);
+	RGB_value diff_color= diffuse_reflection(normal_vector,intersectionPt, ray->distance_travelled, pt_color, config_ptr->light_source[index],config_ptr->diffuse_coeff);
+	RGB_value spec_color= specular_reflection(normal_vector, intersectionPt, ray, pt_color, config_ptr->light_source[index], config_ptr->specular_coeff, config_ptr->specular_exp);
 
 	final_color=color_comp(diff_color.R_value+spec_color.R_value,
 									diff_color.G_value+spec_color.G_value,
@@ -214,7 +215,7 @@ RGB_value total_reflection(vertex* normal_vector, vertex* intersectionPt, vertex
 /* Calculate the net color obtained for all the light sources
  * in the scene.
  * */
-RGB_value* scene_illumination(vertex* normal_vector, vertex* intersectionPt, vertex* ray_startPt, RGB_value *pt_color, config* config_ptr)
+RGB_value* scene_illumination(vertex* normal_vector, vertex* intersectionPt, Ray* ray, RGB_value *pt_color, config* config_ptr)
 {
 	RGB_value* final_color=(RGB_value*)malloc(sizeof(RGB_value));
 	memcpy(final_color,pt_color,sizeof(RGB_value));
@@ -224,15 +225,15 @@ RGB_value* scene_illumination(vertex* normal_vector, vertex* intersectionPt, ver
 	ambient_reflection(final_color,config_ptr->ambient_coeff);
 	for(int i=0; i<num_sources;i++)
 	{
-		temp_color = total_reflection(normal_vector, intersectionPt, ray_startPt, pt_color, config_ptr, i);
+		temp_color = total_reflection(normal_vector, intersectionPt, ray, pt_color, config_ptr, i);
 		final_color->R_value += temp_color.R_value;
 		final_color->G_value += temp_color.G_value;
 		final_color->B_value += temp_color.B_value;
 	}
 
-	final_color->R_value=final_color->R_value/(final_color->R_value+final_color->G_value+final_color->B_value);
-	final_color->G_value=final_color->G_value/(final_color->R_value+final_color->G_value+final_color->B_value);
-	final_color->B_value=final_color->B_value/(final_color->R_value+final_color->G_value+final_color->B_value);
+//	final_color->R_value=final_color->R_value/(final_color->R_value+final_color->G_value+final_color->B_value);
+//	final_color->G_value=final_color->G_value/(final_color->R_value+final_color->G_value+final_color->B_value);
+//	final_color->B_value=final_color->B_value/(final_color->R_value+final_color->G_value+final_color->B_value);
 
 	return final_color;
 }
