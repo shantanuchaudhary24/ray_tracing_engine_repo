@@ -94,12 +94,12 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity(); 
 
-	glTranslatef(0,0,-12);
+	glTranslatef(0,0,-14);
 	glScalef(scale_factor,scale_factor,scale_factor);
 	glRotatef(angle_x, 1, 0, 0);
 	glRotatef(angle_y, 0, 1, 0);
 	glRotatef(angle_z, 0, 0, 1);
-	glTranslatef(0,0,12);
+	glTranslatef(0,0,14);
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -157,7 +157,7 @@ int main(int argc,char *argv[]){
 
 	/* Read input parameters from configuration file*/
 	read_config(inp,outp);
-//	exit(0);
+
 	parameters=outp;
 	/* Set window dimensions from configuration file*/
 	screen_width  = outp->window_width;

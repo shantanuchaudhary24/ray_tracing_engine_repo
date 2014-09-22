@@ -67,9 +67,9 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, floa
 	diff_coeff = diff_coeff/att_factor;
 	if(cos_theta>0)
 	{
-		color_vector.R_value = (diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
-		color_vector.G_value = (diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
-		color_vector.B_value = (diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
+		color_vector.R_value = (diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,1);
+		color_vector.G_value = (diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,1);
+		color_vector.B_value = (diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,1);
 	}
 	else
 	{
@@ -133,9 +133,9 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, Ray
 	vertex* reflection_vector = unitVector(light_vector,&temp_vector);
 	float cos_alpha = dot_product(reflection_vector, ray_point);
 	float distance_travelled = ray->distance_travelled;
-	color_vector.R_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
-	color_vector.G_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
-	color_vector.B_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
+	color_vector.R_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,1);
+	color_vector.G_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,1);
+	color_vector.B_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,1);
 	}
 	else{
 		color_vector.R_value = 0;
@@ -222,7 +222,6 @@ RGB_value* scene_illumination(vertex* normal_vector, vertex* intersectionPt, Ray
 	RGB_value temp_color=color_comp(0,0,0);
 	int num_sources = config_ptr->light_source.size();
 
-	ambient_reflection(final_color,config_ptr->ambient_coeff);
 	for(int i=0; i<num_sources;i++)
 	{
 		temp_color = total_reflection(normal_vector, intersectionPt, ray, pt_color, config_ptr, i);
@@ -230,10 +229,6 @@ RGB_value* scene_illumination(vertex* normal_vector, vertex* intersectionPt, Ray
 		final_color->G_value += temp_color.G_value;
 		final_color->B_value += temp_color.B_value;
 	}
-
-//	final_color->R_value=final_color->R_value/(final_color->R_value+final_color->G_value+final_color->B_value);
-//	final_color->G_value=final_color->G_value/(final_color->R_value+final_color->G_value+final_color->B_value);
-//	final_color->B_value=final_color->B_value/(final_color->R_value+final_color->G_value+final_color->B_value);
 
 	return final_color;
 }

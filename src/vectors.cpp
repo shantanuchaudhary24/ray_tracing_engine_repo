@@ -8,6 +8,10 @@
 #include "../include/structs.h"
 
 
+float distancePoint(vertex* point1,vertex* point2){
+		return sqrtf((point1->x_pos-point2->x_pos)*(point1->x_pos-point2->x_pos)+(point1->y_pos-point2->y_pos)*(point1->y_pos-point2->y_pos)+(point1->z_pos-point2->z_pos)*(point1->z_pos-point2->z_pos));
+}
+
 void unitVector(vertex* point){
 	float normalize= sqrtf((point->x_pos)*(point->x_pos)+(point->y_pos)*(point->y_pos)+(point->z_pos)*(point->z_pos));
 	point->x_pos=(point->x_pos)/normalize;
@@ -120,7 +124,7 @@ vertex* findIntersection(float* eq_plane,Ray* ray){
 	if(a==0)
 		return NULL;
 	float t=-b/a;
-	if(t>0.000001)
+	if(t>0.01)
 	{
 		vertex* intersectionPoint = (vertex*)malloc(sizeof(vertex));
 		intersectionPoint->x_pos = point1->x_pos+t*unitvect->x_pos;
