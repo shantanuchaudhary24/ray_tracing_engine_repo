@@ -6,9 +6,11 @@ This repository contains code for assignment 2 for CSL781: Computer Graphics Cou
 Delhi.
 
 #############################################################################################################################################################
+
 Collaborators:
 Shantanu Chaudhary (2010CS50295)
 Mukesh Kumar (2010CS50288)
+
 #############################################################################################################################################################
 Folder hierarchy:
 Makefile	: For building, cleaning project

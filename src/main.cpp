@@ -84,7 +84,6 @@ void reshape (int width, int height)
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//glOrtho(-10,10,-10,10,-100,100);
 	gluPerspective(60, (GLfloat)width / (GLfloat)height, 1.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -129,12 +128,22 @@ void display(void){
 
 int main(int argc,char *argv[]){
 
+	/* Input Verification*/
+	if(argc < 2)
+	{
+		cout << "Error:CONFIG FILE NOT SUPPLIED!" << endl;
+		exit(0);
+	}
+
 	/* Input file descriptor*/
 	std::ifstream inp;
 
+	/* Name of input file*/
+	inp.open(argv[1]);
+
 	/* Default dimensions of OpenGL window */
-	int screen_width = 1366 ;
-	int screen_height = 768 ;
+	int screen_width = 800 ;
+	int screen_height = 400 ;
 
 	/* Initialization of configuration structure and memory allocation*/
 	config *outp;
