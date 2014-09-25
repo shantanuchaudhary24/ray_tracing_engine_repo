@@ -67,9 +67,9 @@ RGB_value diffuse_reflection(vertex* normal_vector, vertex* intersectionPt, floa
 	diff_coeff = diff_coeff/att_factor;
 	if(cos_theta>0)
 	{
-		color_vector.R_value = (diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,1);
-		color_vector.G_value = (diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,1);
-		color_vector.B_value = (diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,1);
+		color_vector.R_value = (diff_coeff*cos_theta*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
+		color_vector.G_value = (diff_coeff*cos_theta*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
+		color_vector.B_value = (diff_coeff*cos_theta*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
 	}
 	else
 	{
@@ -133,9 +133,9 @@ RGB_value specular_reflection(vertex* normal_vector, vertex* intersectionPt, Ray
 	vertex* reflection_vector = unitVector(light_vector,&temp_vector);
 	float cos_alpha = dot_product(reflection_vector, ray_point);
 	float distance_travelled = ray->distance_travelled;
-	color_vector.R_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,1);
-	color_vector.G_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,1);
-	color_vector.B_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,1);
+	color_vector.R_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->R_value)*(light_src->color->R_value))/pow(distance_travelled,2);
+	color_vector.G_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->G_value)*(light_src->color->G_value))/pow(distance_travelled,2);
+	color_vector.B_value = (specular_coeff*pow(cos_alpha,spec_exp)*(pt_color->B_value)*(light_src->color->B_value))/pow(distance_travelled,2);
 	}
 	else{
 		color_vector.R_value = 0;
