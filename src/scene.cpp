@@ -15,6 +15,7 @@
 #include "../include/illumination.h"
 #include "../include/vectors.h"
 #include "../include/macros.h"
+#include "../include/options.h"
 
 using namespace std;
 int test=0;
@@ -644,7 +645,13 @@ void init(config *ptr){
 		leftTopCoord[i]=eye[i]+eyenormal[i]*d1+Sneg[i];
 
 	/* Level of Sampling via number of pixels*/
-	int N=400;
+#ifndef LEVEL
+	int N=300;
+#endif
+#ifdef LEVEL
+	int N=LEVEL;
+#endif
+
 	float pixel[3];
 	GLubyte texture[N+1][N+1][3];
 
@@ -663,13 +670,14 @@ void init(config *ptr){
 			for(int k=0;k<3;k++){
 				pixel[k]=leftTopCoord[k]+(j*2*width*eyeside[k])/N-(i*2*height*eyeup[k])/N;
 			}
-
-			//float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
+#ifdef SUPERSAMPLING
+			float* pixelcolor=supersampling(pixel,d2,eye,eyeside,eyeup,2*width,2*height,N, ptr);
+#endif
+#ifndef SUPERSAMPLING
 			float* pixelcolor=sampling(pixel,d2,eye,ptr);
+#endif
 			if(pixelcolor!=NULL)
 			{
-				//if(pixelcolor[0]!=0 || pixelcolor[1]!=0 || pixelcolor[2]!=0)
-					//printf("%f %f %f %f\n",pixelcolor[0],pixelcolor[1],pixelcolor[2],pixelcolor[3]);
 				for(int k=0;k<3;k++)
 				texture[i][j][k]=255*pixelcolor[k]>255?255:255*pixelcolor[k];
 			}

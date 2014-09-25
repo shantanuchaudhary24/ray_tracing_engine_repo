@@ -269,8 +269,6 @@ string_code hashit (std::string const& inString) {
  * to various data structures.
  * */
 void read_config(std::ifstream& in, config *out) {
-	/* Name of input file*/
-	in.open("config.cfg");
 	std::string str;
 
 	while(!in.eof()) {

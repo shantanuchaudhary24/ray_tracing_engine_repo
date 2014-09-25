@@ -7,25 +7,53 @@ OBJECTS= obj/polygon.o obj/matrix.o obj/transformations.o obj/frustum.o obj/clip
 OBJDIR= obj/
 LIBS= -lGL -lGLU -lglut -lm
 DISABLE_WARNING=-w
+DEBUG= -g
 DIR=/home/mukesh/Desktop/graphics_csl781/csl781_assignment2/
+CONFIG_DIR=config/
 
-all: gdb
+ifndef CONFIG
+	CONFIG=config.cfg
+endif
 
-create:
+OPTIONS_HEADER=include/options.h
+SAMPLING = "\#define SUPERSAMPLING 1\n"
+ifndef CONFIG
+	CONFIG=config.cfg
+endif
+
+ifndef LEVEL
+	OPTIONS=""
+endif
+ifdef LEVEL
+	OPTIONS=$(SAMPLING)"\#define LEVEL "$(LEVEL)
+endif
+
+CONFIG_FILE=$(CONFIG_DIR)$(CONFIG)
+
+all: build
+
+build:
+	@ echo $(OPTIONS) > $(OPTIONS_HEADER)
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
-gdb:
-	$(CXX) -g $(COMPILE) $(FILES)  $(LIBS)
+supersample:
+	@ echo $(OPTIONS) > $(OPTIONS_HEADER)
+	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
-debug:	
+run:
+	./$(EXE) $(CONFIG_FILE)
+
+gdb:
+	$(CXX) $(DEBUG) $(COMPILE) $(FILES)  $(LIBS)
+	mv *.o $(OBJDIR)
+	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
+
+debug:	gdb
 	gdb $(DIR)$(EXE)
-	
-run: create
-	./$(EXE)
 
 cscope:
 	cscope -R -b

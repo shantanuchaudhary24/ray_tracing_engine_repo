@@ -1,20 +1,54 @@
-#############################################################################################################################################################
 										README
-#############################################################################################################################################################
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 This repository contains code for assignment 2 for CSL781: Computer Graphics Course under supervision of Prof. Prem Kalra at Indian Institute of Technology,
 Delhi.
 
-#############################################################################################################################################################
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Collaborators:
 Shantanu Chaudhary (2010CS50295)
 Mukesh Kumar (2010CS50288)
-#############################################################################################################################################################
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Folder hierarchy:
+
 Makefile	: For building, cleaning project
+
 README		: Information about project code
-config.cfg	: Configuration file for setting project parameters (Refer source code for info)
+
 src		: contains source code files
+
+config      : contains config files for program input and configuration
+
 obj		: contains object code files (Not under version tracker)
+
 include		: library headers for the corresponding src code files
+
 bin		: contains the build binary file (Not under version tracker)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Format of Configuration File:
+Refer configuration files in the config/ directory
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Building the Program:
+
+Default Build: (without supersampling)
+    Use "make build" for building the program with default parameters (without supersampling)
+
+Supersampling Enabled build: (with supersampling)
+    Use "make supersample LEVEL=X" where X defines the LEVEL of supersampling. Default is 500. (Max Tested is 1000)
+
+Executing the program:
+    Use "make run CONFIG=X" where X is the name of the configuration file. The configuration file must be placed in the config folder.
+
+Creating a debug build:
+    Use "make gdb" to compile a binary with debug symbols to be used with gdb.
+
+Debugging the program:
+    Use "make debug" to first compile a binary with debug symbols and run the program in gdb for debugging.
+
+Cleaning the build:
+    Use "make clean" to remove the build binaries and object files.
