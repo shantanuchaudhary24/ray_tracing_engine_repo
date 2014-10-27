@@ -45,7 +45,7 @@ supersample:
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
 run:
-	./$(EXE) $(CONFIG_FILE)
+	./$(EXE) $(CONFIG_DIR)$(CONFIG)
 
 gdb:
 	$(CXX) $(DEBUG) $(COMPILE) $(FILES)  $(LIBS)
