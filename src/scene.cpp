@@ -29,7 +29,7 @@ extern GLuint texName;
 float* matInverse;
 float* matTranspose;
 float* mat;
-bool isDistort=false;
+bool isDistort=true;
 bool globalProperty=false;
 
 /* Function for creating a cube

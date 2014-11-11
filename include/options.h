@@ -1,2 +1,2 @@
 #define SUPERSAMPLING 1
-#define LEVEL 650
+#define LEVEL 400
