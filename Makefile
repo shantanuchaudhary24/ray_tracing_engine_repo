@@ -33,13 +33,13 @@ CONFIG_FILE=$(CONFIG_DIR)$(CONFIG)
 all: build
 
 build:
-	@ echo $(OPTIONS) > $(OPTIONS_HEADER)
+	echo $(OPTIONS) > $(OPTIONS_HEADER)
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)
 
 supersample:
-	@ echo $(OPTIONS) > $(OPTIONS_HEADER)
+	echo $(OPTIONS) > $(OPTIONS_HEADER)
 	$(CXX) $(COMPILE) $(FILES)  $(LIBS)
 	mv *.o $(OBJDIR)
 	$(CXX) $(LINK) $(EXE) $(OBJECTS) $(LIBS)

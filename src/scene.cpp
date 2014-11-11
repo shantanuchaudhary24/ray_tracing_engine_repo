@@ -143,7 +143,7 @@ void create_scene(float* eye, config* ptr ){
 		poly3->set_spec_exp(10);
 		poly3->set_diff_coeff(0.2);
 		myTranslatef(-eye[0],-eye[1],-eye[2],poly3);
-		sceneData.push_back(poly3);
+//			sceneData.push_back(poly3);
 
 }
 
