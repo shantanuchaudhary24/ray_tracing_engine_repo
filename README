@@ -1,54 +1,73 @@
-										README
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-This repository contains code for assignment 2 for CSL781: Computer Graphics Course under supervision of Prof. Prem Kalra at Indian Institute of Technology,
-Delhi.
+################################################################################################
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+					     README
+
+################################################################################################
+
+This repository contains for software based simulation of ray tracing engine of OpenGL. The
+implementation has the following features:
+-> Rendering of regular objects such as cubes, spheres etc.
+-> Local illumination model with diffuse, specular and ambient components.
+-> Global illumination with reflection, refraction and shadows.
+-> Anti-aliasing using supersampling
+-> Input specifications in the form of geometric properties of regular 3D objects
+-> Input specification in the form of material properties of regular 3D objects
+-> Provision for tweaking diffuse, specular, ambient light properties coefficients
+-> Provision for handling multiple light sources.
+-> Input specification for eye/camera in viewing coordinate system
+
+################################################################################################
+
 Collaborators:
-Shantanu Chaudhary (2010CS50295)
-Mukesh Kumar (2010CS50288)
+Shantanu Chaudhary (shantanuchaudhary24@gmail.com)
+Mukesh Kumar (mukeshkumar51091@gmail.com)
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+################################################################################################
 
 Folder hierarchy:
-
 Makefile	: For building, cleaning project
-
 README		: Information about project code
+config		: Directory containing config files (Refer config files for more info)
+src		: source code files
+obj		: object code files (Not under version tracker)
+include		: library headers
+bin		: built binary file (Not under version tracker)
 
-src		: contains source code files
+################################################################################################
 
-config      : contains config files for program input and configuration
+Dependencies:
+-> C++ compiler
+-> OpenGL 3.0 or higher
 
-obj		: contains object code files (Not under version tracker)
+################################################################################################
 
-include		: library headers for the corresponding src code files
-
-bin		: contains the build binary file (Not under version tracker)
-
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Format of Configuration File:
-Refer configuration files in the config/ directory
-
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Building the Program:
+Setting up project code:
+-> Clone the repository
+-> Create two directories with name "obj" and "bin" in the repository
 
 Default Build: (without supersampling)
-    Use "make build" for building the program with default parameters (without supersampling)
+-> Use "make build" for building the program with default parameters (without supersampling)
 
 Supersampling Enabled build: (with supersampling)
-    Use "make supersample LEVEL=X" where X defines the LEVEL of supersampling. Default is 500. (Max Tested is 1000)
+-> Use "make supersample LEVEL=X" where X defines the LEVEL of supersampling. Default is 500.
+   (Max Tested is 1000)
+
 
 Executing the program:
-    Use "make run CONFIG=X" where X is the name of the configuration file. The configuration file must be placed in the config folder.
+-> Use "make run CONFIG=X" where X is the name of the configuration file. The configuration file
+   must be placed in the config folder.
 
 Creating a debug build:
-    Use "make gdb" to compile a binary with debug symbols to be used with gdb.
+-> Use "make gdb" to compile a binary with debug symbols to be used with gdb.
 
 Debugging the program:
-    Use "make debug" to first compile a binary with debug symbols and run the program in gdb for debugging.
+-> Use "make debug" to first compile a binary with debug symbols and run the program in gdb
+   for debugging.
 
 Cleaning the build:
-    Use "make clean" to remove the build binaries and object files.
+-> Use "make clean" to remove the build binaries and object files.
+
+Configuring Input:
+-> Refer config.cfg files
+
+################################################################################################
